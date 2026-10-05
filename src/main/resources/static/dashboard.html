@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard - Clothing Exchange & Swap Marketplace</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            background: #f5f8f6;
+            color: #26352d;
+        }
+
+        /* ================= HEADER ================= */
+
+        .topbar {
+            height: 70px;
+            background: white;
+            border-bottom: 1px solid #e5ebe7;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 28px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-logo {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: #e8f5ed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 23px;
+        }
+
+        .brand-text h2 {
+            font-size: 18px;
+            color: #123c2a;
+        }
+
+        .brand-text p {
+            font-size: 11px;
+            color: #789083;
+            margin-top: 2px;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .search-box {
+            width: 250px;
+            height: 38px;
+            border: 1px solid #dfe8e2;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            padding: 0 14px;
+            color: #8b9991;
+            font-size: 13px;
+        }
+
+        .search-box input {
+            border: none;
+            outline: none;
+            width: 100%;
+            margin-left: 8px;
+            font-size: 13px;
+        }
+
+        .user-mini {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #dcefe4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #17633f;
+            font-weight: bold;
+        }
+
+        .user-mini strong {
+            display: block;
+            font-size: 13px;
+        }
+
+        .user-mini span {
+            font-size: 11px;
+            color: #84918a;
+        }
+
+        /* ================= LAYOUT ================= */
+
+        .layout {
+            display: flex;
+            min-height: calc(100vh - 70px);
+        }
+
+        /* ================= SIDEBAR ================= */
+
+        .sidebar {
+            width: 235px;
+            background: #123c2a;
+            color: white;
+            padding: 22px 14px;
+            min-height: calc(100vh - 70px);
+            position: fixed;
+            left: 0;
+            top: 70px;
+            bottom: 0;
+        }
+
+        .menu-title {
+            color: #91b2a0;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 12px 14px 8px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 12px 14px;
+            border-radius: 9px;
+            margin-bottom: 5px;
+            color: #d9e9df;
+            text-decoration: none;
+            font-size: 13px;
+            transition: .2s;
+        }
+
+        .nav-item:hover {
+            background: #1d5940;
+            color: white;
+        }
+
+        .nav-item.active {
+            background: #2c7754;
+            color: white;
+            font-weight: bold;
+        }
+
+        .nav-icon {
+            width: 22px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .sidebar-bottom {
+            position: absolute;
+            bottom: 20px;
+            left: 14px;
+            right: 14px;
+        }
+
+        .logout-btn {
+            width: 100%;
+            border: 1px solid #44715b;
+            background: transparent;
+            color: #dcece3;
+            padding: 11px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .logout-btn:hover {
+            background: #9b3d3d;
+            border-color: #9b3d3d;
+            color: white;
+        }
+
+        /* ================= MAIN ================= */
+
+        .main {
+            margin-left: 235px;
+            width: calc(100% - 235px);
+            padding: 28px;
+        }
+
+        .welcome {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .welcome h1 {
+            font-size: 25px;
+            color: #163e2d;
+        }
+
+        .welcome p {
+            color: #78877f;
+            font-size: 13px;
+            margin-top: 6px;
+        }
+
+        .add-btn {
+            background: #236b49;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 18px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .add-btn:hover {
+            background: #185338;
+        }
+
+        /* ================= STAT CARDS ================= */
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid #e4ebe6;
+            border-radius: 12px;
+            padding: 19px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,.025);
+        }
+
+        .stat-info p {
+            color: #84918a;
+            font-size: 12px;
+            margin-bottom: 7px;
+        }
+
+        .stat-info h2 {
+            color: #163e2d;
+            font-size: 25px;
+        }
+
+        .stat-icon {
+            width: 43px;
+            height: 43px;
+            border-radius: 11px;
+            background: #e8f5ed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        /* ================= CONTENT GRID ================= */
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1.7fr 1fr;
+            gap: 20px;
+        }
+
+        .panel {
+            background: white;
+            border: 1px solid #e4ebe6;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+        }
+
+        .panel-header h3 {
+            color: #183d2d;
+            font-size: 16px;
+        }
+
+        .view-all {
+            color: #28724e;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* ================= LISTINGS ================= */
+
+        .listing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 13px;
+        }
+
+        .listing-card {
+            border: 1px solid #e5ebe7;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #fff;
+            transition: .2s;
+        }
+
+        .listing-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,.07);
+        }
+
+        .listing-image {
+            width: 100%;
+            height: 135px;
+            background: #edf2ef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .listing-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .no-image {
+            font-size: 35px;
+        }
+
+        .listing-content {
+            padding: 11px;
+        }
+
+        .listing-content h4 {
+            font-size: 13px;
+            color: #263c31;
+            margin-bottom: 6px;
+        }
+
+        .listing-meta {
+            font-size: 10px;
+            color: #859189;
+            margin-bottom: 8px;
+        }
+
+        .value {
+            color: #21704b;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        /* ================= REQUESTS ================= */
+
+        .request {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 12px 0;
+            border-bottom: 1px solid #edf1ee;
+        }
+
+        .request:last-child {
+            border-bottom: none;
+        }
+
+        .request-avatar {
+            width: 37px;
+            height: 37px;
+            border-radius: 50%;
+            background: #e6f2eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #246d4b;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .request-info {
+            flex: 1;
+        }
+
+        .request-info strong {
+            font-size: 12px;
+            color: #304238;
+        }
+
+        .request-info p {
+            font-size: 10px;
+            color: #88958e;
+            margin-top: 3px;
+        }
+
+        .status {
+            padding: 5px 8px;
+            border-radius: 12px;
+            font-size: 9px;
+            font-weight: bold;
+        }
+
+        .pending {
+            background: #fff4d9;
+            color: #9b7200;
+        }
+
+        .accepted {
+            background: #e2f5e9;
+            color: #237246;
+        }
+
+        .rejected {
+            background: #fde8e8;
+            color: #a44343;
+        }
+
+        /* ================= QUICK ACTIONS ================= */
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .quick {
+            border: 1px solid #e4ebe6;
+            border-radius: 9px;
+            padding: 13px;
+            text-decoration: none;
+            color: #294136;
+            background: #fbfdfc;
+            font-size: 11px;
+            transition: .2s;
+        }
+
+        .quick:hover {
+            border-color: #9fc5ad;
+            background: #f1f8f4;
+        }
+
+        .quick-icon {
+            font-size: 19px;
+            margin-bottom: 7px;
+        }
+
+        .quick strong {
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        .quick span {
+            color: #87938c;
+            font-size: 10px;
+        }
+
+        /* ================= ADMIN ================= */
+
+        .admin-section {
+            display: none;
+        }
+
+        /* ================= RESPONSIVE ================= */
+
+        @media (max-width: 1100px) {
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 800px) {
+
+            .topbar {
+                padding: 0 15px;
+            }
+
+            .search-box {
+                display: none;
+            }
+
+            .sidebar {
+                width: 70px;
+                padding: 15px 8px;
+            }
+
+            .brand-text,
+            .menu-title,
+            .nav-item span:not(.nav-icon),
+            .sidebar-bottom .logout-btn span {
+                display: none;
+            }
+
+            .nav-item {
+                justify-content: center;
+                padding: 13px;
+            }
+
+            .main {
+                margin-left: 70px;
+                width: calc(100% - 70px);
+                padding: 18px;
+            }
+
+            .listing-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 550px) {
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .welcome {
+                align-items: flex-start;
+                gap: 15px;
+                flex-direction: column;
+            }
+
+            .listing-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .topbar {
+                height: 62px;
+            }
+
+            .sidebar {
+                top: 62px;
+                min-height: calc(100vh - 62px);
+            }
+
+            .user-mini > div:last-child {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- ================= TOP BAR ================= -->
+
+<header class="topbar">
+
+    <div class="brand">
+        <div class="brand-logo">♻️</div>
+
+        <div class="brand-text">
+            <h2>Clothing Exchange</h2>
+            <p>Swap • Reuse • Make a Difference</p>
+        </div>
+    </div>
+
+    <div class="top-actions">
+
+        <div class="search-box">
+            🔍
+            <input type="text"
+                   placeholder="Search clothes..."
+                   onkeyup="searchListings(this.value)">
+        </div>
+
+        <div class="user-mini" onclick="window.location.href='profile.html'">
+
+            <div class="avatar" id="topAvatar">U</div>
+
+            <div>
+                <strong id="topUserName">User</strong>
+                <span id="topUserRole">Member</span>
+            </div>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+<!-- ================= MAIN LAYOUT ================= -->
+
+<div class="layout">
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside class="sidebar">
+
+        <div class="menu-title">Main Menu</div>
+
+        <a href="dashboard.html" class="nav-item active">
+            <span class="nav-icon">🏠</span>
+            <span>Dashboard</span>
+        </a>
+
+        <a href="listings.html" class="nav-item">
+            <span class="nav-icon">👕</span>
+            <span>Browse Clothes</span>
+        </a>
+
+        <a href="add-item.html" class="nav-item">
+            <span class="nav-icon">➕</span>
+            <span>Add Clothing</span>
+        </a>
+
+        <a href="swap-requests.html" class="nav-item">
+            <span class="nav-icon">🔄</span>
+            <span>Swap Requests</span>
+        </a>
+
+        <a href="chat.html" class="nav-item">
+            <span class="nav-icon">💬</span>
+            <span>Chat & Negotiation</span>
+        </a>
+
+        <div class="menu-title">Tools</div>
+
+        <a href="swap-calculator.html" class="nav-item">
+            <span class="nav-icon">🧮</span>
+            <span>Swap Calculator</span>
+        </a>
+
+        <a href="location-matching.html" class="nav-item">
+            <span class="nav-icon">📍</span>
+            <span>Location Matching</span>
+        </a>
+
+        <a href="profile.html" class="nav-item">
+            <span class="nav-icon">👤</span>
+            <span>My Profile</span>
+        </a>
+
+        <div id="adminMenu" class="admin-section">
+
+            <div class="menu-title">Administration</div>
+
+            <a href="admin.html" class="nav-item">
+                <span class="nav-icon">⚙️</span>
+                <span>Admin Panel</span>
+            </a>
+
+        </div>
+
+        <div class="sidebar-bottom">
+
+            <button class="logout-btn" onclick="logout()">
+                🚪 <span>Logout</span>
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <!-- ================= CONTENT ================= -->
+
+    <main class="main">
+
+        <section class="welcome">
+
+            <div>
+                <h1>Welcome back, <span id="welcomeName">User</span> 👋</h1>
+                <p>Find something you love. Swap something you don't.</p>
+            </div>
+
+            <button class="add-btn"
+                    onclick="window.location.href='add-item.html'">
+                + Add Clothing
+            </button>
+
+        </section>
+
+
+        <!-- ================= STATISTICS ================= -->
+
+        <section class="stats">
+
+            <div class="stat-card">
+
+                <div class="stat-info">
+                    <p>My Listings</p>
+                    <h2 id="myListings">0</h2>
+                </div>
+
+                <div class="stat-icon">👕</div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-info">
+                    <p>Swap Requests</p>
+                    <h2 id="swapRequests">0</h2>
+                </div>
+
+                <div class="stat-icon">🔄</div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-info">
+                    <p>Successful Swaps</p>
+                    <h2 id="successfulSwaps">0</h2>
+                </div>
+
+                <div class="stat-icon">🤝</div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-info">
+                    <p>Active Chats</p>
+                    <h2 id="activeChats">0</h2>
+                </div>
+
+                <div class="stat-icon">💬</div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= MAIN CONTENT ================= -->
+
+        <div class="content-grid">
+
+            <!-- LEFT -->
+
+            <div>
+
+                <!-- RECENT LISTINGS -->
+
+                <section class="panel">
+
+                    <div class="panel-header">
+
+                        <h3>Recent Listings</h3>
+
+                        <a href="listings.html" class="view-all">
+                            View All →
+                        </a>
+
+                    </div>
+
+                    <div id="recentListings" class="listing-grid">
+
+                        <div class="listing-card">
+                            <div class="listing-image">
+                                <div class="no-image">👕</div>
+                            </div>
+
+                            <div class="listing-content">
+                                <h4>Loading...</h4>
+                                <div class="listing-meta">
+                                    Please wait
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- RECENT SWAP REQUESTS -->
+
+                <section class="panel">
+
+                    <div class="panel-header">
+
+                        <h3>Recent Swap Requests</h3>
+
+                        <a href="swap-requests.html" class="view-all">
+                            View All →
+                        </a>
+
+                    </div>
+
+                    <div id="recentRequests">
+
+                        <div class="request">
+
+                            <div class="request-avatar">
+                                🔄
+                            </div>
+
+                            <div class="request-info">
+                                <strong>No recent requests</strong>
+                                <p>Your swap requests will appear here.</p>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+
+            <!-- RIGHT -->
+
+            <div>
+
+                <!-- QUICK ACTIONS -->
+
+                <section class="panel">
+
+                    <div class="panel-header">
+                        <h3>Quick Actions</h3>
+                    </div>
+
+                    <div class="quick-actions">
+
+                        <a href="add-item.html" class="quick">
+                            <div class="quick-icon">➕</div>
+                            <strong>Add Clothing</strong>
+                            <span>List an item for swap</span>
+                        </a>
+
+                        <a href="listings.html" class="quick">
+                            <div class="quick-icon">👕</div>
+                            <strong>Browse Clothes</strong>
+                            <span>Find your next swap</span>
+                        </a>
+
+                        <a href="swap-requests.html" class="quick">
+                            <div class="quick-icon">🔄</div>
+                            <strong>Swap Requests</strong>
+                            <span>Manage your requests</span>
+                        </a>
+
+                        <a href="chat.html" class="quick">
+                            <div class="quick-icon">💬</div>
+                            <strong>Chat</strong>
+                            <span>Negotiate with users</span>
+                        </a>
+
+                        <a href="swap-calculator.html" class="quick">
+                            <div class="quick-icon">🧮</div>
+                            <strong>Value Calculator</strong>
+                            <span>Check swap fairness</span>
+                        </a>
+
+                        <a href="location-matching.html" class="quick">
+                            <div class="quick-icon">📍</div>
+                            <strong>Nearby Swaps</strong>
+                            <span>Find nearby listings</span>
+                        </a>
+
+                    </div>
+
+                </section>
+
+
+                <!-- SUSTAINABILITY -->
+
+                <section class="panel">
+
+                    <div class="panel-header">
+                        <h3>🌱 Your Impact</h3>
+                    </div>
+
+                    <p style="
+                        color:#718078;
+                        font-size:12px;
+                        line-height:1.7;
+                    ">
+                        Every successful clothing swap gives pre-loved
+                        clothes a second life and helps reduce textile waste.
+                    </p>
+
+                    <div style="
+                        margin-top:15px;
+                        padding:14px;
+                        background:#edf7f1;
+                        border-radius:9px;
+                        color:#236b49;
+                        font-size:12px;
+                        font-weight:bold;
+                    ">
+                        ♻️ Keep swapping. Keep it sustainable.
+                    </div>
+
+                </section>
+
+
+                <!-- ADMIN -->
+
+                <section id="adminCard"
+                         class="panel admin-section">
+
+                    <div class="panel-header">
+                        <h3>⚙️ Administration</h3>
+                    </div>
+
+                    <p style="
+                        color:#718078;
+                        font-size:12px;
+                        margin-bottom:14px;
+                    ">
+                        Manage users, listings, swaps and disputes.
+                    </p>
+
+                    <button class="add-btn"
+                            onclick="window.location.href='admin.html'">
+                        Open Admin Panel
+                    </button>
+
+                </section>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<script>
+
+    let currentUser = null;
+
+    // ================= LOAD USER =================
+
+    async function loadUser() {
+
+        try {
+
+            const response = await fetch('/api/auth/me');
+
+            if (!response.ok) {
+                return;
+            }
+
+            currentUser = await response.json();
+
+            const name =
+                currentUser.name ||
+                currentUser.fullName ||
+                currentUser.email ||
+                'User';
+
+            document.getElementById('welcomeName').textContent = name;
+            document.getElementById('topUserName').textContent = name;
+
+            document.getElementById('topAvatar').textContent =
+                name.charAt(0).toUpperCase();
+
+            const role =
+                currentUser.role ||
+                'USER';
+
+            document.getElementById('topUserRole').textContent =
+                role === 'ADMIN' ? 'Administrator' : 'Member';
+
+            if (role === 'ADMIN') {
+
+                document.getElementById('adminMenu').style.display = 'block';
+                document.getElementById('adminCard').style.display = 'block';
+
+            }
+
+            loadDashboardData();
+
+        } catch (error) {
+
+            console.error('User loading error:', error);
+
+            loadDashboardData();
+        }
+    }
+
+
+    // ================= DASHBOARD DATA =================
+
+    async function loadDashboardData() {
+
+        loadListings();
+        loadMyListings();
+        loadSwapRequests();
+
+    }
+
+
+    // ================= LISTINGS =================
+
+    async function loadListings() {
+
+        try {
+
+            const response =
+                await fetch('/api/items/available');
+
+            if (!response.ok) {
+                throw new Error('Unable to load listings');
+            }
+
+            const items = await response.json();
+
+            displayListings(items);
+
+        } catch (error) {
+
+            console.error('Listings error:', error);
+
+            document.getElementById('recentListings').innerHTML = `
+                <div style="
+                    grid-column:1/-1;
+                    padding:25px;
+                    text-align:center;
+                    color:#87938c;
+                    font-size:13px;
+                ">
+                    Unable to load listings.
+                </div>
+            `;
+        }
+    }
+
+
+    function displayListings(items) {
+
+        const container =
+            document.getElementById('recentListings');
+
+        if (!items || items.length === 0) {
+
+            container.innerHTML = `
+                <div style="
+                    grid-column:1/-1;
+                    padding:25px;
+                    text-align:center;
+                    color:#87938c;
+                    font-size:13px;
+                ">
+                    No clothing listings available yet.
+                </div>
+            `;
+
+            return;
+        }
+
+        const recent = items.slice(0, 6);
+
+        container.innerHTML = recent.map(item => {
+
+            const image = item.imageUrl
+                ? `<img src="${escapeHtml(item.imageUrl)}"
+                        alt="${escapeHtml(item.title || 'Clothing')}">`
+                : `<div class="no-image">👕</div>`;
+
+            return `
+                <div class="listing-card"
+                     onclick="openItem(${item.id})"
+                     style="cursor:pointer">
+
+                    <div class="listing-image">
+                        ${image}
+                    </div>
+
+                    <div class="listing-content">
+
+                        <h4>
+                            ${escapeHtml(item.title || 'Clothing Item')}
+                        </h4>
+
+                        <div class="listing-meta">
+                            ${escapeHtml(item.category || 'Clothing')}
+                            •
+                            ${escapeHtml(item.size || 'N/A')}
+                            •
+                            ${escapeHtml(item.condition || 'N/A')}
+                        </div>
+
+                        <div class="value">
+                            ₹${item.estimatedValue || 0}
+                        </div>
+
+                    </div>
+
+                </div>
+            `;
+
+        }).join('');
+    }
+
+
+    function openItem(id) {
+
+        window.location.href =
+            'item-detail.html?id=' + id;
+    }
+
+
+    // ================= MY LISTINGS =================
+
+    async function loadMyListings() {
+
+        if (!currentUser || !currentUser.id) {
+            return;
+        }
+
+        try {
+
+            const response =
+                await fetch('/api/items/owner/' + currentUser.id);
+
+            if (!response.ok) {
+                return;
+            }
+
+            const items = await response.json();
+
+            document.getElementById('myListings').textContent =
+                items.length;
+
+        } catch (error) {
+
+            console.error('My listings error:', error);
+        }
+    }
+
+
+    // ================= SWAP REQUESTS =================
+
+    async function loadSwapRequests() {
+
+        if (!currentUser || !currentUser.id) {
+            return;
+        }
+
+        try {
+
+            const sentResponse =
+                await fetch(
+                    '/api/swaps/requester/' +
+                    currentUser.id
+                );
+
+            const receivedResponse =
+                await fetch(
+                    '/api/swaps/owner/' +
+                    currentUser.id
+                );
+
+            let sent = [];
+            let received = [];
+
+            if (sentResponse.ok) {
+                sent = await sentResponse.json();
+            }
+
+            if (receivedResponse.ok) {
+                received = await receivedResponse.json();
+            }
+
+            const allRequests = [
+                ...sent,
+                ...received
+            ];
+
+            document.getElementById('swapRequests').textContent =
+                allRequests.length;
+
+            const accepted =
+                allRequests.filter(
+                    request =>
+                        String(request.status).toUpperCase()
+                        === 'ACCEPTED'
+                );
+
+            document.getElementById('successfulSwaps').textContent =
+                accepted.length;
+
+            displayRequests(allRequests);
+
+        } catch (error) {
+
+            console.error('Swap request error:', error);
+        }
+    }
+
+
+    function displayRequests(requests) {
+
+        const container =
+            document.getElementById('recentRequests');
+
+        if (!requests || requests.length === 0) {
+
+            container.innerHTML = `
+                <div class="request">
+
+                    <div class="request-avatar">
+                        🔄
+                    </div>
+
+                    <div class="request-info">
+                        <strong>No recent requests</strong>
+                        <p>Your swap requests will appear here.</p>
+                    </div>
+
+                </div>
+            `;
+
+            return;
+        }
+
+        const recent =
+            requests.slice(-5).reverse();
+
+        container.innerHTML =
+            recent.map(request => {
+
+                const status =
+                    String(request.status || 'PENDING')
+                    .toUpperCase();
+
+                let statusClass = 'pending';
+
+                if (status === 'ACCEPTED') {
+                    statusClass = 'accepted';
+                }
+
+                if (status === 'REJECTED') {
+                    statusClass = 'rejected';
+                }
+
+                return `
+                    <div class="request">
+
+                        <div class="request-avatar">
+                            🔄
+                        </div>
+
+                        <div class="request-info">
+
+                            <strong>
+                                Swap Request #${request.id}
+                            </strong>
+
+                            <p>
+                                Item ID:
+                                ${request.requestedItemId || 'N/A'}
+                            </p>
+
+                        </div>
+
+                        <span class="status ${statusClass}">
+                            ${status}
+                        </span>
+
+                    </div>
+                `;
+
+            }).join('');
+    }
+
+
+    // ================= SEARCH =================
+
+    function searchListings(value) {
+
+        if (!value) {
+            return;
+        }
+
+        window.location.href =
+            'listings.html?search=' +
+            encodeURIComponent(value);
+    }
+
+
+    // ================= LOGOUT =================
+
+    async function logout() {
+
+        try {
+
+            await fetch('/api/auth/logout', {
+                method: 'POST'
+            });
+
+        } catch (error) {
+
+            console.error(error);
+
+        } finally {
+
+            window.location.href = 'login.html';
+
+        }
+    }
+
+
+    // ================= SECURITY / HTML ESCAPE =================
+
+    function escapeHtml(value) {
+
+        if (value === null || value === undefined) {
+            return '';
+        }
+
+        return String(value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
+
+    // ================= START =================
+
+    document.addEventListener(
+        'DOMContentLoaded',
+        loadUser
+    );
+
+</script>
+
+</body>
+</html>

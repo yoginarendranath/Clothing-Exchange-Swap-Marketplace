@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Report Dispute - Clothing Exchange</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f6fa;
+            color: #333;
+        }
+
+        .navbar {
+            background: #667eea;
+            color: white;
+            padding: 18px 35px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar h2 {
+            margin: 0;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            margin-top: 0;
+            color: #667eea;
+        }
+
+        .info {
+            background: #f0f2ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-top: 18px;
+            margin-bottom: 7px;
+            font-weight: bold;
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 7px;
+            font-size: 15px;
+        }
+
+        textarea {
+            min-height: 130px;
+            resize: vertical;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 25px;
+            padding: 13px;
+            border: none;
+            border-radius: 7px;
+            background: #667eea;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #5568d8;
+        }
+
+        button:disabled {
+            background: #aaa;
+            cursor: not-allowed;
+        }
+
+        .message {
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 7px;
+            display: none;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        @media (max-width: 600px) {
+
+            .navbar {
+                padding: 15px 20px;
+            }
+
+            .navbar h2 {
+                font-size: 18px;
+            }
+
+            .container {
+                margin: 20px auto;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<nav class="navbar">
+
+    <h2>Clothing Exchange</h2>
+
+    <a href="/swap-requests.html">
+        Back to Swaps
+    </a>
+
+</nav>
+
+
+<div class="container">
+
+    <div class="card">
+
+        <h1>⚠️ Report a Dispute</h1>
+
+        <div class="info">
+
+            <strong>Swap Request ID:</strong>
+
+            <span id="swapRequestDisplay">
+                Loading...
+            </span>
+
+        </div>
+
+
+        <form id="disputeForm">
+
+
+            <label for="subject">
+                Issue Type
+            </label>
+
+            <select id="subject" required>
+
+                <option value="">
+                    Select an issue
+                </option>
+
+                <option value="Item not received">
+                    Item not received
+                </option>
+
+                <option value="Wrong item received">
+                    Wrong item received
+                </option>
+
+                <option value="Item condition problem">
+                    Item condition problem
+                </option>
+
+                <option value="User behavior issue">
+                    User behavior issue
+                </option>
+
+                <option value="Other">
+                    Other
+                </option>
+
+            </select>
+
+
+            <label for="description">
+                Describe the Problem
+            </label>
+
+            <textarea
+                id="description"
+                placeholder="Explain what happened..."
+                required></textarea>
+
+
+            <button
+                type="submit"
+                id="submitButton">
+
+                Submit Dispute
+
+            </button>
+
+
+        </form>
+
+
+        <div
+            id="message"
+            class="message">
+        </div>
+
+
+    </div>
+
+</div>
+
+
+<script>
+
+    const loggedInUser =
+        JSON.parse(
+            localStorage.getItem("loggedInUser")
+        );
+
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+
+    const swapRequestId =
+        params.get("swapRequestId");
+
+
+    const display =
+        document.getElementById(
+            "swapRequestDisplay"
+        );
+
+
+    // =========================
+    // LOGIN CHECK
+    // =========================
+
+    if (!loggedInUser) {
+
+        alert(
+            "Please login first."
+        );
+
+        window.location.href =
+            "/login.html";
+
+    }
+
+
+    // =========================
+    // SWAP ID CHECK
+    // =========================
+
+    if (!swapRequestId) {
+
+        display.textContent =
+            "No swap request selected.";
+
+        document.getElementById(
+            "submitButton"
+        ).disabled = true;
+
+    } else {
+
+        display.textContent =
+            "#" + swapRequestId;
+
+    }
+
+
+    // =========================
+    // SHOW MESSAGE
+    // =========================
+
+    function showMessage(
+        text,
+        type
+    ) {
+
+        const message =
+            document.getElementById(
+                "message"
+            );
+
+        message.textContent = text;
+
+        message.className =
+            "message " + type;
+
+        message.style.display =
+            "block";
+
+    }
+
+
+    // =========================
+    // SUBMIT DISPUTE
+    // =========================
+
+    document.getElementById(
+        "disputeForm"
+    ).addEventListener(
+        "submit",
+        async function(event) {
+
+            event.preventDefault();
+
+
+            if (!loggedInUser) {
+
+                showMessage(
+                    "Please login first.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            if (!swapRequestId) {
+
+                showMessage(
+                    "Invalid swap request.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            const subject =
+                document.getElementById(
+                    "subject"
+                ).value;
+
+
+            const description =
+                document.getElementById(
+                    "description"
+                ).value.trim();
+
+
+            if (!subject) {
+
+                showMessage(
+                    "Please select an issue type.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            if (!description) {
+
+                showMessage(
+                    "Please describe the problem.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            const button =
+                document.getElementById(
+                    "submitButton"
+                );
+
+
+            button.disabled = true;
+
+            button.textContent =
+                "Submitting...";
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/disputes",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body: JSON.stringify({
+
+                                reporterId:
+                                    Number(
+                                        loggedInUser.id
+                                    ),
+
+                                swapRequestId:
+                                    Number(
+                                        swapRequestId
+                                    ),
+
+                                subject:
+                                    subject,
+
+                                description:
+                                    description
+
+                            })
+
+                        }
+                    );
+
+
+                const result =
+                    await response.text();
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        result ||
+                        "Failed to submit dispute"
+                    );
+
+                }
+
+
+                showMessage(
+                    "Dispute submitted successfully.",
+                    "success"
+                );
+
+
+                document.getElementById(
+                    "disputeForm"
+                ).reset();
+
+
+                setTimeout(
+                    function() {
+
+                        window.location.href =
+                            "/swap-requests.html";
+
+                    },
+                    1500
+                );
+
+
+            } catch (error) {
+
+                console.error(error);
+
+                showMessage(
+                    error.message ||
+                    "Something went wrong.",
+                    "error"
+                );
+
+
+                button.disabled = false;
+
+                button.textContent =
+                    "Submit Dispute";
+
+            }
+
+        }
+    );
+
+</script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Request Swap - Clothing Exchange</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f5f7fb;
+            color: #222;
+        }
+
+        nav {
+            background: #222;
+            color: white;
+            padding: 18px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav h2 {
+            font-size: 22px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 850px;
+            margin: 35px auto;
+        }
+
+        .container h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 25px;
+        }
+
+        .item-card {
+            background: #eef0ff;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+
+        .item-card h2 {
+            margin-bottom: 15px;
+        }
+
+        .item-info {
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 17px;
+        }
+
+        select,
+        textarea {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        select {
+            background: white;
+        }
+
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            background: #222;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: #444;
+        }
+
+        .btn:disabled {
+            background: #999;
+            cursor: not-allowed;
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .error {
+            background: #ffe5e5;
+            color: #b00020;
+        }
+
+        .success {
+            background: #e5ffe9;
+            color: #08752b;
+        }
+
+        .info {
+            background: #eef5ff;
+            color: #174a8b;
+        }
+
+        .selected-info {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background: #f1f5f9;
+            border-radius: 8px;
+            line-height: 1.7;
+        }
+
+        .selected-info strong {
+            color: #222;
+        }
+
+        @media (max-width: 600px) {
+
+            nav {
+                padding: 15px 5%;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            nav a {
+                margin-left: 10px;
+                margin-right: 10px;
+            }
+
+            .container {
+                width: 94%;
+                margin: 25px auto;
+            }
+
+            .card,
+            .item-card {
+                padding: 18px;
+            }
+
+            .container h1 {
+                font-size: 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<nav>
+    <h2>Clothing Exchange</h2>
+
+    <div>
+        <a href="/dashboard.html">Dashboard</a>
+        <a href="/listings.html">Listings</a>
+    </div>
+</nav>
+
+
+<div class="container">
+
+    <h1>🔄 Request a Clothing Swap</h1>
+
+    <div id="message" class="message"></div>
+
+
+    <!-- REQUESTED ITEM -->
+
+    <div class="item-card">
+
+        <h2>👕 Clothing Item You Want</h2>
+
+        <div class="item-info">
+
+            <div>
+                <strong>Category:</strong>
+                <span id="itemCategory">-</span>
+            </div>
+
+            <div>
+                <strong>Title:</strong>
+                <span id="itemTitle">Loading...</span>
+            </div>
+
+            <div>
+                <strong>Size:</strong>
+                <span id="itemSize">-</span>
+            </div>
+
+            <div>
+                <strong>Brand:</strong>
+                <span id="itemBrand">-</span>
+            </div>
+
+            <div>
+                <strong>Condition:</strong>
+                <span id="itemCondition">-</span>
+            </div>
+
+            <div>
+                <strong>Location:</strong>
+                <span id="itemLocation">-</span>
+            </div>
+
+            <div>
+                <strong>Estimated Value:</strong>
+                ₹<span id="itemValue">0</span>
+            </div>
+
+            <div>
+                <strong>Owner ID:</strong>
+                <span id="itemOwner">-</span>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- SWAP FORM -->
+
+    <div class="card">
+
+        <div class="form-group">
+
+            <label for="offeredItem">
+                👕 Select Your Clothing Item
+            </label>
+
+            <select id="offeredItem" disabled onchange="showSelectedItem()">
+                <option value="">
+                    Loading your clothing items...
+                </option>
+            </select>
+
+            <div id="selectedInfo" class="selected-info"></div>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="messageText">
+                💬 Message
+            </label>
+
+            <textarea
+                id="messageText"
+                placeholder="Write a message to the clothing owner..."
+            ></textarea>
+
+        </div>
+
+
+        <button
+            id="sendButton"
+            class="btn"
+            onclick="sendSwapRequest()"
+            disabled
+        >
+            Send Swap Request
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    let currentUser = null;
+    let currentUserId = null;
+
+    let requestedItemId = null;
+    let requestedItem = null;
+
+    // NEW:
+    // Calculator se aane wala offered item
+    let preselectedOfferedItemId = null;
+
+    let myAvailableItems = [];
+
+
+    /* ===============================
+       SHOW MESSAGE
+    ================================ */
+
+    function showMessage(text, type = "error") {
+
+        const message = document.getElementById("message");
+
+        message.textContent = text;
+
+        message.className = "message " + type;
+
+        message.style.display = "block";
+    }
+
+
+    /* ===============================
+       GET LOGGED-IN USER
+    ================================ */
+
+    function getLoggedInUser() {
+
+        const storedUser =
+            localStorage.getItem("loggedInUser");
+
+        if (!storedUser) {
+
+            window.location.href = "/login.html";
+
+            return false;
+        }
+
+        try {
+
+            currentUser = JSON.parse(storedUser);
+
+            if (!currentUser || !currentUser.id) {
+
+                localStorage.removeItem("loggedInUser");
+
+                window.location.href = "/login.html";
+
+                return false;
+            }
+
+            currentUserId =
+                Number(currentUser.id);
+
+            console.log(
+                "Logged-in user:",
+                currentUser
+            );
+
+            console.log(
+                "Current user ID:",
+                currentUserId
+            );
+
+            return true;
+
+        } catch (error) {
+
+            console.error(
+                "Invalid loggedInUser:",
+                error
+            );
+
+            localStorage.removeItem("loggedInUser");
+
+            window.location.href = "/login.html";
+
+            return false;
+        }
+    }
+
+
+    /* ===============================
+       GET URL PARAMETERS
+       
+       Supported:
+
+       Normal:
+       /swap-request.html?itemId=2
+
+       Calculator:
+       /swap-request.html?itemId=2&offeredItemId=4
+    ================================ */
+
+    function getUrlParameters() {
+
+        const params =
+            new URLSearchParams(
+                window.location.search
+            );
+
+
+        requestedItemId =
+            params.get("itemId");
+
+
+        // NEW:
+        preselectedOfferedItemId =
+            params.get("offeredItemId");
+
+
+        console.log(
+            "Requested item ID:",
+            requestedItemId
+        );
+
+        console.log(
+            "Preselected offered item ID:",
+            preselectedOfferedItemId
+        );
+
+
+        if (!requestedItemId) {
+
+            showMessage(
+                "No clothing item selected. Please open this page from View Details → Request Swap.",
+                "error"
+            );
+
+            document.getElementById(
+                "itemTitle"
+            ).textContent =
+                "No item selected";
+
+            document.getElementById(
+                "offeredItem"
+            ).disabled = true;
+
+            document.getElementById(
+                "sendButton"
+            ).disabled = true;
+
+            return false;
+        }
+
+
+        return true;
+    }
+
+
+    /* ===============================
+       LOAD REQUESTED ITEM
+    ================================ */
+
+    async function loadRequestedItem() {
+
+        try {
+
+            console.log(
+                "Fetching requested item:",
+                "/api/items/" + requestedItemId
+            );
+
+
+            const response =
+                await fetch(
+                    "/api/items/" +
+                    encodeURIComponent(
+                        requestedItemId
+                    )
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Server returned status " +
+                    response.status
+                );
+            }
+
+
+            requestedItem =
+                await response.json();
+
+
+            console.log(
+                "Requested item:",
+                requestedItem
+            );
+
+
+            document.getElementById(
+                "itemTitle"
+            ).textContent =
+                requestedItem.title || "-";
+
+
+            document.getElementById(
+                "itemCategory"
+            ).textContent =
+                requestedItem.category || "-";
+
+
+            document.getElementById(
+                "itemSize"
+            ).textContent =
+                requestedItem.size || "-";
+
+
+            document.getElementById(
+                "itemBrand"
+            ).textContent =
+                requestedItem.brand || "-";
+
+
+            document.getElementById(
+                "itemCondition"
+            ).textContent =
+                requestedItem.condition || "-";
+
+
+            document.getElementById(
+                "itemLocation"
+            ).textContent =
+                requestedItem.location || "-";
+
+
+            document.getElementById(
+                "itemValue"
+            ).textContent =
+                requestedItem.estimatedValue || 0;
+
+
+            document.getElementById(
+                "itemOwner"
+            ).textContent =
+                requestedItem.ownerId || "-";
+
+
+            /* SELF-SWAP CHECK */
+
+            if (
+                Number(requestedItem.ownerId)
+                === currentUserId
+            ) {
+
+                showMessage(
+                    "You cannot send a swap request for your own clothing item.",
+                    "error"
+                );
+
+                document.getElementById(
+                    "offeredItem"
+                ).disabled = true;
+
+                document.getElementById(
+                    "sendButton"
+                ).disabled = true;
+
+                return false;
+            }
+
+
+            return true;
+
+
+        } catch (error) {
+
+            console.error(
+                "Error loading requested item:",
+                error
+            );
+
+
+            showMessage(
+                "Unable to load the selected clothing item. Please go back and try again.",
+                "error"
+            );
+
+
+            document.getElementById(
+                "itemTitle"
+            ).textContent =
+                "Unable to load item";
+
+
+            return false;
+        }
+    }
+
+
+    /* ===============================
+       LOAD CURRENT USER'S CLOTHES
+    ================================ */
+
+    async function loadMyClothingItems() {
+
+        const select =
+            document.getElementById(
+                "offeredItem"
+            );
+
+        const button =
+            document.getElementById(
+                "sendButton"
+            );
+
+
+        try {
+
+            select.disabled = true;
+
+            button.disabled = true;
+
+
+            select.innerHTML = `
+                <option value="">
+                    Loading your clothing items...
+                </option>
+            `;
+
+
+            console.log(
+                "Fetching user's items:",
+                "/api/items/owner/" +
+                currentUserId
+            );
+
+
+            const response =
+                await fetch(
+                    "/api/items/owner/" +
+                    encodeURIComponent(
+                        currentUserId
+                    )
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Server returned status " +
+                    response.status
+                );
+            }
+
+
+            const items =
+                await response.json();
+
+
+            console.log(
+                "My clothing items:",
+                items
+            );
+
+
+            /* ONLY AVAILABLE ITEMS */
+
+            myAvailableItems =
+                items.filter(item => {
+
+                    return (
+                        String(
+                            item.status || ""
+                        ).toUpperCase()
+                        === "AVAILABLE"
+                        &&
+                        Number(
+                            item.ownerId
+                        )
+                        === currentUserId
+                        &&
+                        Number(item.id)
+                        !==
+                        Number(requestedItemId)
+                    );
+
+                });
+
+
+            select.innerHTML = "";
+
+
+            if (
+                myAvailableItems.length === 0
+            ) {
+
+                select.innerHTML = `
+                    <option value="">
+                        No available clothing items to offer
+                    </option>
+                `;
+
+                select.disabled = true;
+
+                button.disabled = true;
+
+
+                showMessage(
+                    "You don't have an available clothing item to offer. Add a clothing item first, then try the swap again.",
+                    "info"
+                );
+
+                return;
+            }
+
+
+            /* DEFAULT OPTION */
+
+            const defaultOption =
+                document.createElement(
+                    "option"
+                );
+
+            defaultOption.value = "";
+
+            defaultOption.textContent =
+                "Select the clothing item you want to offer";
+
+            select.appendChild(
+                defaultOption
+            );
+
+
+            /* ADD ITEMS */
+
+            myAvailableItems.forEach(
+                item => {
+
+                    const option =
+                        document.createElement(
+                            "option"
+                        );
+
+
+                    option.value =
+                        item.id;
+
+
+                    option.textContent =
+                        `${item.title || "Untitled"} | ${item.category || "Other"} | ₹${item.estimatedValue || 0}`;
+
+
+                    select.appendChild(
+                        option
+                    );
+
+                }
+            );
+
+
+            select.disabled = false;
+
+            button.disabled = false;
+
+
+            /*
+             * IMPORTANT
+             *
+             * If user came from calculator,
+             * automatically select the item
+             * they chose as their offer.
+             */
+
+            if (
+                preselectedOfferedItemId
+            ) {
+
+                const matchingItem =
+                    myAvailableItems.find(
+                        item =>
+                            Number(item.id)
+                            ===
+                            Number(
+                                preselectedOfferedItemId
+                            )
+                    );
+
+
+                if (matchingItem) {
+
+                    select.value =
+                        String(
+                            matchingItem.id
+                        );
+
+
+                    showSelectedItem();
+
+
+                    showMessage(
+                        "Your calculated swap item has been selected automatically.",
+                        "info"
+                    );
+
+
+                    console.log(
+                        "Auto-selected offered item:",
+                        matchingItem
+                    );
+
+                } else {
+
+                    console.warn(
+                        "Preselected offered item not found:",
+                        preselectedOfferedItemId
+                    );
+
+
+                    showMessage(
+                        "The selected offer item is no longer available. Please select another item.",
+                        "info"
+                    );
+                }
+            }
+
+
+            console.log(
+                myAvailableItems.length +
+                " available clothing item(s) loaded."
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "Error loading user's clothing items:",
+                error
+            );
+
+
+            select.innerHTML = `
+                <option value="">
+                    Failed to load your clothing items
+                </option>
+            `;
+
+
+            select.disabled = true;
+
+            button.disabled = true;
+
+
+            showMessage(
+                "Could not load your clothing items. Check that the backend is running and that your account owns an available listing.",
+                "error"
+            );
+        }
+    }
+
+
+    /* ===============================
+       SHOW SELECTED OFFER ITEM
+    ================================ */
+
+    function showSelectedItem() {
+
+        const select =
+            document.getElementById(
+                "offeredItem"
+            );
+
+        const selectedId =
+            select.value;
+
+        const selectedInfo =
+            document.getElementById(
+                "selectedInfo"
+            );
+
+
+        if (!selectedId) {
+
+            selectedInfo.style.display =
+                "none";
+
+            selectedInfo.innerHTML = "";
+
+            return;
+        }
+
+
+        const item =
+            myAvailableItems.find(
+                item =>
+                    Number(item.id)
+                    ===
+                    Number(selectedId)
+            );
+
+
+        if (!item) {
+
+            selectedInfo.style.display =
+                "none";
+
+            return;
+        }
+
+
+        selectedInfo.innerHTML = `
+            <strong>Selected Item:</strong>
+            ${escapeHtml(item.title || "-")}
+            <br>
+
+            <strong>Category:</strong>
+            ${escapeHtml(item.category || "-")}
+            <br>
+
+            <strong>Size:</strong>
+            ${escapeHtml(item.size || "-")}
+            <br>
+
+            <strong>Brand:</strong>
+            ${escapeHtml(item.brand || "-")}
+            <br>
+
+            <strong>Condition:</strong>
+            ${escapeHtml(item.condition || "-")}
+            <br>
+
+            <strong>Estimated Value:</strong>
+            ₹${item.estimatedValue || 0}
+        `;
+
+
+        selectedInfo.style.display =
+            "block";
+    }
+
+
+    /* ===============================
+       HTML ESCAPE
+    ================================ */
+
+    function escapeHtml(value) {
+
+        return String(value)
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+    }
+
+
+    /* ===============================
+       SEND SWAP REQUEST
+    ================================ */
+
+    async function sendSwapRequest() {
+
+        const select =
+            document.getElementById(
+                "offeredItem"
+            );
+
+
+        const message =
+            document.getElementById(
+                "messageText"
+            )
+            .value
+            .trim();
+
+
+        const button =
+            document.getElementById(
+                "sendButton"
+            );
+
+
+        const offeredItemId =
+            select.value;
+
+
+        if (!offeredItemId) {
+
+            showMessage(
+                "Please select a clothing item that you want to offer.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        if (!requestedItem) {
+
+            showMessage(
+                "Requested clothing item is not loaded.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        if (
+            Number(requestedItem.ownerId)
+            === currentUserId
+        ) {
+
+            showMessage(
+                "You cannot send a swap request for your own item.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        /* Prevent offering an item not owned by user */
+
+        const selectedOfferedItem =
+            myAvailableItems.find(
+                item =>
+                    Number(item.id)
+                    ===
+                    Number(offeredItemId)
+            );
+
+
+        if (!selectedOfferedItem) {
+
+            showMessage(
+                "Invalid offered clothing item.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        button.disabled = true;
+
+        button.textContent =
+            "Sending Request...";
+
+
+        const swapRequest = {
+
+            requesterId:
+                currentUserId,
+
+            ownerId:
+                Number(
+                    requestedItem.ownerId
+                ),
+
+            requestedItemId:
+                Number(
+                    requestedItemId
+                ),
+
+            offeredItemId:
+                Number(
+                    offeredItemId
+                ),
+
+            message:
+                message
+        };
+
+
+        console.log(
+            "Sending swap request:",
+            swapRequest
+        );
+
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/swaps",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify(
+                                swapRequest
+                            )
+                    }
+                );
+
+
+            const resultText =
+                await response.text();
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    resultText ||
+                    "Failed to send swap request"
+                );
+            }
+
+
+            console.log(
+                "Swap request created:",
+                resultText
+            );
+
+
+            showMessage(
+                "Swap request sent successfully! Redirecting...",
+                "success"
+            );
+
+
+            setTimeout(() => {
+
+                window.location.href =
+                    "/swap-requests.html";
+
+            }, 1200);
+
+
+        } catch (error) {
+
+            console.error(
+                "Error sending swap request:",
+                error
+            );
+
+
+            showMessage(
+                "Failed to send swap request: " +
+                error.message,
+                "error"
+            );
+
+
+            button.disabled = false;
+
+            button.textContent =
+                "Send Swap Request";
+        }
+    }
+
+
+    /* ===============================
+       INITIALIZE PAGE
+    ================================ */
+
+    async function initializePage() {
+
+        console.log(
+            "Initializing swap request page..."
+        );
+
+
+        if (!getLoggedInUser()) {
+            return;
+        }
+
+
+        if (!getUrlParameters()) {
+            return;
+        }
+
+
+        const itemLoaded =
+            await loadRequestedItem();
+
+
+        if (!itemLoaded) {
+            return;
+        }
+
+
+        await loadMyClothingItems();
+    }
+
+
+    /* START */
+
+    initializePage();
+
+</script>
+
+</body>
+</html>

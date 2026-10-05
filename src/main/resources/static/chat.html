@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Negotiation Chat - Clothing Exchange</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f5f3ff;
+        }
+
+        .navbar {
+            background: #6c4ce8;
+            color: white;
+            padding: 18px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-weight: bold;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 900px;
+            margin: 30px auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .chat-header {
+            padding: 20px;
+            background: #6c4ce8;
+            color: white;
+        }
+
+        .chat-header h2 {
+            margin-bottom: 8px;
+        }
+
+        .status {
+            font-size: 14px;
+        }
+
+        .online {
+            color: #b8ffca;
+        }
+
+        .offline {
+            color: #ffd0d0;
+        }
+
+        .receiver-section {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .receiver-section label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        .messages {
+            height: 450px;
+            overflow-y: auto;
+            padding: 20px;
+            background: #faf9ff;
+        }
+
+        .empty {
+            text-align: center;
+            color: #888;
+            margin-top: 180px;
+        }
+
+        .message {
+            max-width: 70%;
+            padding: 12px 15px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            word-wrap: break-word;
+        }
+
+        .sent {
+            margin-left: auto;
+            background: #6c4ce8;
+            color: white;
+        }
+
+        .received {
+            margin-right: auto;
+            background: #e9e5ff;
+            color: #222;
+        }
+
+        .message-time {
+            display: block;
+            font-size: 11px;
+            margin-top: 5px;
+            opacity: 0.7;
+        }
+
+        .input-area {
+            display: flex;
+            gap: 10px;
+            padding: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .input-area input {
+            flex: 1;
+            padding: 13px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        .input-area button {
+            padding: 13px 22px;
+            border: none;
+            border-radius: 8px;
+            background: #6c4ce8;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .input-area button:hover {
+            background: #5638c5;
+        }
+
+        .input-area button:disabled {
+            background: #aaa;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 600px) {
+
+            .navbar {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .navbar a {
+                margin-left: 8px;
+            }
+
+            .message {
+                max-width: 85%;
+            }
+
+            .input-area {
+                flex-direction: column;
+            }
+
+            .input-area button {
+                width: 100%;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="navbar">
+
+    <strong>Clothing Exchange</strong>
+
+    <div>
+
+        <a href="dashboard.html">Dashboard</a>
+
+        <a href="listings.html">Listings</a>
+
+        <a href="swap-requests.html">Swaps</a>
+
+    </div>
+
+</div>
+
+
+<div class="container">
+
+    <div class="card">
+
+        <div class="chat-header">
+
+            <h2>Negotiation Chat</h2>
+
+            <div
+                id="connectionStatus"
+                class="status offline">
+
+                Connecting...
+
+            </div>
+
+        </div>
+
+
+        <div class="receiver-section">
+
+            <label for="receiver">
+                Chat With
+            </label>
+
+            <select id="receiver">
+
+                <option value="">
+                    Select a user...
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div
+            class="messages"
+            id="messages">
+
+            <div class="empty">
+                Select a user to start negotiation.
+            </div>
+
+        </div>
+
+
+        <div class="input-area">
+
+            <input
+                type="text"
+                id="messageInput"
+                placeholder="Type your message..."
+                maxlength="500"
+                disabled
+            >
+
+            <button
+                id="sendButton"
+                onclick="sendMessage()"
+                disabled>
+
+                Send
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    // =========================================
+    // CURRENT USER
+    // =========================================
+
+    const loggedInUser =
+        JSON.parse(
+            localStorage.getItem("loggedInUser")
+        );
+
+
+    if (!loggedInUser) {
+
+        alert("Please login first.");
+
+        window.location.href = "login.html";
+
+    }
+
+
+    let stompClient = null;
+
+    let selectedReceiverId = null;
+
+
+    // =========================================
+    // CONNECT WEBSOCKET
+    // =========================================
+
+    function connectWebSocket() {
+
+        const socket = new SockJS("/ws");
+
+        stompClient = Stomp.over(socket);
+
+        stompClient.debug = null;
+
+
+        stompClient.connect(
+            {},
+            function () {
+
+                console.log("WebSocket connected");
+
+                updateConnectionStatus(true);
+
+
+                stompClient.subscribe(
+                    "/topic/user/" + loggedInUser.id,
+                    function (response) {
+
+                        const message =
+                            JSON.parse(response.body);
+
+                        displayMessage(message);
+
+                    }
+                );
+
+
+                updateSendButton();
+
+            },
+            function (error) {
+
+                console.error(
+                    "WebSocket error:",
+                    error
+                );
+
+                updateConnectionStatus(false);
+
+            }
+        );
+
+    }
+
+
+    // =========================================
+    // CONNECTION STATUS
+    // =========================================
+
+    function updateConnectionStatus(connected) {
+
+        const element =
+            document.getElementById(
+                "connectionStatus"
+            );
+
+
+        if (connected) {
+
+            element.innerText = "● Connected";
+
+            element.className =
+                "status online";
+
+        } else {
+
+            element.innerText = "● Disconnected";
+
+            element.className =
+                "status offline";
+
+        }
+
+    }
+
+
+    // =========================================
+    // LOAD USERS
+    // =========================================
+
+    async function loadUsers() {
+
+        const select =
+            document.getElementById(
+                "receiver"
+            );
+
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/admin/users"
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Unable to load users"
+                );
+
+            }
+
+
+            const users =
+                await response.json();
+
+
+            select.innerHTML =
+                `<option value="">
+                    Select a user...
+                </option>`;
+
+
+            users
+                .filter(
+                    user =>
+                        user.id !== loggedInUser.id
+                )
+                .forEach(user => {
+
+                    const option =
+                        document.createElement(
+                            "option"
+                        );
+
+
+                    option.value = user.id;
+
+
+                    option.textContent =
+                        user.name +
+                        " (" +
+                        user.location +
+                        ")";
+
+
+                    select.appendChild(option);
+
+                });
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            select.innerHTML =
+                `<option value="">
+                    Unable to load users
+                </option>`;
+
+        }
+
+    }
+
+
+    // =========================================
+    // SELECT RECEIVER
+    // =========================================
+
+    document.getElementById(
+        "receiver"
+    ).addEventListener(
+        "change",
+        async function () {
+
+            selectedReceiverId =
+                this.value
+                    ? Number(this.value)
+                    : null;
+
+
+            const input =
+                document.getElementById(
+                    "messageInput"
+                );
+
+            const button =
+                document.getElementById(
+                    "sendButton"
+                );
+
+
+            if (selectedReceiverId) {
+
+                input.disabled = false;
+
+                updateSendButton();
+
+
+                // Load previous conversation
+                await loadChatHistory();
+
+
+                input.focus();
+
+
+            } else {
+
+                input.disabled = true;
+
+                button.disabled = true;
+
+
+                document.getElementById(
+                    "messages"
+                ).innerHTML = `
+
+                    <div class="empty">
+
+                        Select a user to
+                        start negotiation.
+
+                    </div>
+
+                `;
+
+            }
+
+        }
+    );
+
+
+    // =========================================
+    // LOAD CHAT HISTORY
+    // =========================================
+
+    async function loadChatHistory() {
+
+        if (!selectedReceiverId) {
+            return;
+        }
+
+
+        const container =
+            document.getElementById(
+                "messages"
+            );
+
+
+        container.innerHTML = `
+
+            <div class="empty">
+
+                Loading conversation...
+
+            </div>
+
+        `;
+
+
+        try {
+
+            const response =
+                await fetch(
+                    `/api/chat/history?user1=${loggedInUser.id}&user2=${selectedReceiverId}`
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Unable to load chat history"
+                );
+
+            }
+
+
+            const messages =
+                await response.json();
+
+
+            container.innerHTML = "";
+
+
+            if (!messages.length) {
+
+                container.innerHTML = `
+
+                    <div class="empty">
+
+                        No previous messages.
+                        Start your negotiation.
+
+                    </div>
+
+                `;
+
+                return;
+
+            }
+
+
+            messages.forEach(message => {
+
+                displayMessage(
+                    message,
+                    false
+                );
+
+            });
+
+
+            container.scrollTop =
+                container.scrollHeight;
+
+
+        } catch (error) {
+
+            console.error(
+                "Chat history error:",
+                error
+            );
+
+
+            container.innerHTML = `
+
+                <div class="empty">
+
+                    Unable to load
+                    conversation.
+
+                </div>
+
+            `;
+
+        }
+
+    }
+
+
+    // =========================================
+    // SEND MESSAGE
+    // =========================================
+
+    function sendMessage() {
+
+        if (
+            !stompClient ||
+            !stompClient.connected
+        ) {
+
+            alert(
+                "Chat connection is not ready."
+            );
+
+            return;
+
+        }
+
+
+        if (!selectedReceiverId) {
+
+            alert(
+                "Please select a user."
+            );
+
+            return;
+
+        }
+
+
+        const input =
+            document.getElementById(
+                "messageInput"
+            );
+
+
+        const text =
+            input.value.trim();
+
+
+        if (!text) {
+            return;
+        }
+
+
+        const message = {
+
+            senderId:
+                loggedInUser.id,
+
+            receiverId:
+                selectedReceiverId,
+
+            message:
+                text
+
+        };
+
+
+        stompClient.send(
+            "/app/chat",
+            {},
+            JSON.stringify(message)
+        );
+
+
+        input.value = "";
+
+        input.focus();
+
+    }
+
+
+    // =========================================
+    // DISPLAY MESSAGE
+    // =========================================
+
+    function displayMessage(
+        message,
+        autoScroll = true
+    ) {
+
+        const belongsToCurrentChat =
+            (
+                message.senderId ===
+                    loggedInUser.id &&
+                message.receiverId ===
+                    selectedReceiverId
+            )
+            ||
+            (
+                message.receiverId ===
+                    loggedInUser.id &&
+                message.senderId ===
+                    selectedReceiverId
+            );
+
+
+        if (!belongsToCurrentChat) {
+            return;
+        }
+
+
+        const container =
+            document.getElementById(
+                "messages"
+            );
+
+
+        const empty =
+            container.querySelector(
+                ".empty"
+            );
+
+
+        if (empty) {
+            container.innerHTML = "";
+        }
+
+
+        const div =
+            document.createElement(
+                "div"
+            );
+
+
+        div.classList.add("message");
+
+
+        if (
+            message.senderId ===
+            loggedInUser.id
+        ) {
+
+            div.classList.add("sent");
+
+        } else {
+
+            div.classList.add("received");
+
+        }
+
+
+        const text =
+            document.createElement(
+                "span"
+            );
+
+
+        text.innerText =
+            message.message;
+
+
+        const time =
+            document.createElement(
+                "small"
+            );
+
+
+        time.className =
+            "message-time";
+
+
+        time.innerText =
+            formatTime(
+                message.timestamp
+            );
+
+
+        div.appendChild(text);
+
+        div.appendChild(time);
+
+
+        container.appendChild(div);
+
+
+        if (autoScroll) {
+
+            container.scrollTop =
+                container.scrollHeight;
+
+        }
+
+    }
+
+
+    // =========================================
+    // SEND BUTTON STATE
+    // =========================================
+
+    function updateSendButton() {
+
+        const button =
+            document.getElementById(
+                "sendButton"
+            );
+
+
+        button.disabled =
+            !selectedReceiverId ||
+            !stompClient ||
+            !stompClient.connected;
+
+    }
+
+
+    // =========================================
+    // FORMAT TIME
+    // =========================================
+
+    function formatTime(timestamp) {
+
+        if (!timestamp) {
+            return "";
+        }
+
+
+        const date =
+            new Date(timestamp);
+
+
+        if (isNaN(date.getTime())) {
+            return "";
+        }
+
+
+        return date.toLocaleTimeString(
+            "en-IN",
+            {
+                hour: "2-digit",
+                minute: "2-digit"
+            }
+        );
+
+    }
+
+
+    // =========================================
+    // ENTER KEY SEND
+    // =========================================
+
+    document.getElementById(
+        "messageInput"
+    ).addEventListener(
+        "keydown",
+        function(event) {
+
+            if (event.key === "Enter") {
+
+                event.preventDefault();
+
+                sendMessage();
+
+            }
+
+        }
+    );
+
+
+    // =========================================
+    // START
+    // =========================================
+
+    loadUsers();
+
+    connectWebSocket();
+
+</script>
+
+</body>
+
+</html>

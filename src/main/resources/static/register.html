@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Create Account - Clothing Exchange</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 20px;
+        }
+
+        .container {
+            width: 420px;
+            max-width: 100%;
+            background: white;
+            padding: 35px;
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo {
+            text-align: center;
+            font-size: 40px;
+            margin-bottom: 8px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
+            color: #444;
+        }
+
+        input {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #ccc;
+            border-radius: 7px;
+            font-size: 15px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 7px;
+            background: #667eea;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        button:hover {
+            background: #5568d8;
+        }
+
+        button:disabled {
+            background: #aaa;
+            cursor: not-allowed;
+        }
+
+        #message {
+            margin-top: 15px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        /* OTP SECTION */
+
+        #otpSection {
+            display: none;
+        }
+
+        .otp-title {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .otp-description {
+            text-align: center;
+            color: #777;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 18px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .back-link a {
+            color: #667eea;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+    <div class="logo">
+        👕
+    </div>
+
+
+    <!-- =========================
+         REGISTRATION SECTION
+         ========================= -->
+
+    <div id="registrationSection">
+
+        <h1>
+            Create Account
+        </h1>
+
+        <p class="subtitle">
+            Join the Clothing Exchange Marketplace
+        </p>
+
+
+        <form id="registerForm">
+
+
+            <!-- NAME -->
+
+            <div class="form-group">
+
+                <label for="name">
+                    Full Name
+                </label>
+
+                <input
+                    type="text"
+                    id="name"
+                    placeholder="Enter your name"
+                    required>
+
+            </div>
+
+
+            <!-- EMAIL -->
+
+            <div class="form-group">
+
+                <label for="email">
+                    Email
+                </label>
+
+                <input
+                    type="email"
+                    id="email"
+                    placeholder="Enter your email"
+                    required>
+
+            </div>
+
+
+            <!-- PASSWORD -->
+
+            <div class="form-group">
+
+                <label for="password">
+                    Password
+                </label>
+
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Create a password"
+                    required>
+
+            </div>
+
+
+            <!-- PHONE -->
+
+            <div class="form-group">
+
+                <label for="phone">
+                    Phone
+                </label>
+
+                <input
+                    type="tel"
+                    id="phone"
+                    placeholder="Enter phone number">
+
+            </div>
+
+
+            <!-- LOCATION -->
+
+            <div class="form-group">
+
+                <label for="location">
+                    Location
+                </label>
+
+                <input
+                    type="text"
+                    id="location"
+                    placeholder="Enter your city">
+
+            </div>
+
+
+            <button
+                type="submit"
+                id="sendOtpButton">
+
+                Send OTP & Continue
+
+            </button>
+
+        </form>
+
+
+        <div id="message"></div>
+
+
+        <div class="back-link">
+
+            Already have an account?
+
+            <a href="/login.html">
+                Login
+            </a>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =========================
+         OTP SECTION
+         ========================= -->
+
+    <div id="otpSection">
+
+        <h2 class="otp-title">
+            Verify Your Email
+        </h2>
+
+        <p class="otp-description">
+
+            We have sent a 6-digit OTP to your email address.
+
+            <br>
+
+            Enter the OTP below to create your account.
+
+        </p>
+
+
+        <input
+            type="text"
+            id="otp"
+            maxlength="6"
+            inputmode="numeric"
+            placeholder="Enter 6-digit OTP">
+
+
+        <button
+            type="button"
+            id="verifyOtpButton"
+            onclick="verifyOTP()">
+
+            Verify OTP & Create Account
+
+        </button>
+
+
+        <div id="otpMessage"
+             style="
+                margin-top:15px;
+                text-align:center;
+                font-weight:bold;
+                font-size:14px;
+             ">
+
+        </div>
+
+
+        <div class="back-link">
+
+            <a href="#"
+               onclick="backToRegistration()">
+
+                ← Back to Registration
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<script>
+
+
+// =====================================================
+// TEMPORARY USER DATA
+// =====================================================
+
+let pendingUser = null;
+
+
+
+// =====================================================
+// REGISTRATION FORM
+// =====================================================
+
+document
+    .getElementById("registerForm")
+    .addEventListener(
+        "submit",
+        async function(event) {
+
+            event.preventDefault();
+
+
+            const name =
+                document
+                    .getElementById("name")
+                    .value
+                    .trim();
+
+
+            const email =
+                document
+                    .getElementById("email")
+                    .value
+                    .trim();
+
+
+            const password =
+                document
+                    .getElementById("password")
+                    .value;
+
+
+            const phone =
+                document
+                    .getElementById("phone")
+                    .value
+                    .trim();
+
+
+            const location =
+                document
+                    .getElementById("location")
+                    .value
+                    .trim();
+
+
+            const message =
+                document
+                    .getElementById("message");
+
+
+            // Basic validation
+
+            if (!name || !email || !password) {
+
+                message.style.color = "red";
+
+                message.textContent =
+                    "Please fill all required fields.";
+
+                return;
+            }
+
+
+            // Store registration information temporarily
+
+            pendingUser = {
+
+                name: name,
+
+                email: email,
+
+                password: password,
+
+                phone: phone,
+
+                location: location
+
+            };
+
+
+            try {
+
+
+                message.style.color =
+                    "#667eea";
+
+                message.textContent =
+                    "Sending OTP...";
+
+
+                const response =
+                    await fetch(
+                        "/api/otp/send?email=" +
+                        encodeURIComponent(email),
+                        {
+                            method: "POST"
+                        }
+                    );
+
+
+                const result =
+                    await response.text();
+
+
+                if (response.ok) {
+
+
+                    message.style.color =
+                        "green";
+
+                    message.textContent =
+                        "OTP sent successfully. Check your email.";
+
+
+                    // Hide registration form
+
+                    document
+                        .getElementById(
+                            "registrationSection"
+                        )
+                        .style.display = "none";
+
+
+                    // Show OTP section
+
+                    document
+                        .getElementById(
+                            "otpSection"
+                        )
+                        .style.display = "block";
+
+
+                } else {
+
+
+                    message.style.color =
+                        "red";
+
+                    message.textContent =
+                        result;
+
+
+                    pendingUser = null;
+
+                }
+
+
+            } catch (error) {
+
+
+                message.style.color =
+                    "red";
+
+                message.textContent =
+                    "Unable to connect to the server.";
+
+
+                pendingUser = null;
+
+            }
+
+        }
+    );
+
+
+
+// =====================================================
+// VERIFY OTP
+// =====================================================
+
+async function verifyOTP() {
+
+
+    const otp =
+        document
+            .getElementById("otp")
+            .value
+            .trim();
+
+
+    const message =
+        document
+            .getElementById("otpMessage");
+
+
+    if (!otp || otp.length !== 6) {
+
+
+        message.style.color =
+            "red";
+
+        message.textContent =
+            "Please enter a valid 6-digit OTP.";
+
+        return;
+    }
+
+
+    if (!pendingUser) {
+
+
+        message.style.color =
+            "red";
+
+        message.textContent =
+            "Registration information is missing.";
+
+        return;
+    }
+
+
+    try {
+
+
+        message.style.color =
+            "#667eea";
+
+        message.textContent =
+            "Verifying OTP...";
+
+
+        const response =
+            await fetch(
+                "/api/otp/verify?email=" +
+                encodeURIComponent(
+                    pendingUser.email
+                ) +
+                "&otp=" +
+                encodeURIComponent(otp),
+                {
+                    method: "POST"
+                }
+            );
+
+
+        const result =
+            await response.text();
+
+
+        if (!response.ok) {
+
+
+            message.style.color =
+                "red";
+
+            message.textContent =
+                result;
+
+            return;
+        }
+
+
+        // OTP verified
+
+        message.style.color =
+            "green";
+
+        message.textContent =
+            "OTP verified. Creating your account...";
+
+
+        // Create account
+
+        await createAccount();
+
+
+    } catch (error) {
+
+
+        message.style.color =
+            "red";
+
+        message.textContent =
+            "Unable to connect to the server.";
+
+    }
+
+}
+
+
+
+// =====================================================
+// CREATE ACCOUNT
+// =====================================================
+
+async function createAccount() {
+
+
+    const message =
+        document
+            .getElementById("otpMessage");
+
+
+    try {
+
+
+        const response =
+            await fetch(
+                "/api/auth/register",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify(
+                            pendingUser
+                        )
+                }
+            );
+
+
+        const result =
+            await response.text();
+
+
+        if (response.ok) {
+
+
+            message.style.color =
+                "green";
+
+            message.textContent =
+                "Account created successfully!";
+
+
+            setTimeout(
+                function() {
+
+                    window.location.href =
+                        "/login.html";
+
+                },
+                1500
+            );
+
+
+        } else {
+
+
+            message.style.color =
+                "red";
+
+            message.textContent =
+                result;
+
+        }
+
+
+    } catch (error) {
+
+
+        message.style.color =
+            "red";
+
+        message.textContent =
+            "Unable to connect to the server.";
+
+    }
+
+}
+
+
+
+// =====================================================
+// BACK TO REGISTRATION
+// =====================================================
+
+function backToRegistration() {
+
+
+    document
+        .getElementById(
+            "otpSection"
+        )
+        .style.display = "none";
+
+
+    document
+        .getElementById(
+            "registrationSection"
+        )
+        .style.display = "block";
+
+
+    document
+        .getElementById("otp")
+        .value = "";
+
+
+    document
+        .getElementById("otpMessage")
+        .textContent = "";
+
+
+    pendingUser = null;
+
+}
+
+</script>
+
+
+</body>
+
+</html>

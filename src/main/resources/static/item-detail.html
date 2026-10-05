@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Item Details - ClothSwap</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f5f8f6;
+            color: #1f2937;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 240px;
+            background: #ffffff;
+            border-right: 1px solid #e5e7eb;
+            padding: 25px 15px;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: 700;
+            color: #159447;
+            padding: 0 15px 30px;
+        }
+
+        .menu {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .menu a {
+            text-decoration: none;
+            color: #64748b;
+            padding: 13px 15px;
+            border-radius: 10px;
+            transition: 0.2s;
+        }
+
+        .menu a:hover,
+        .menu a.active {
+            background: #eaf8ef;
+            color: #159447;
+            font-weight: 600;
+        }
+
+        /* MAIN */
+        .main {
+            margin-left: 240px;
+            width: calc(100% - 240px);
+            padding: 28px 35px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+        }
+
+        .back-btn {
+            text-decoration: none;
+            color: #159447;
+            background: #eaf8ef;
+            padding: 10px 16px;
+            border-radius: 9px;
+            font-weight: 600;
+        }
+
+        .profile-btn {
+            text-decoration: none;
+            color: white;
+            background: #159447;
+            padding: 11px 18px;
+            border-radius: 9px;
+            font-weight: 600;
+        }
+
+        /* DETAIL CARD */
+        .detail-card {
+            background: white;
+            border-radius: 18px;
+            padding: 28px;
+            display: grid;
+            grid-template-columns: minmax(300px, 1fr) minmax(320px, 1fr);
+            gap: 40px;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+        }
+
+        /* IMAGE */
+        .image-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .main-image {
+            width: 100%;
+            max-width: 550px;
+            height: 500px;
+            object-fit: cover;
+            border-radius: 15px;
+            background: #eef2f0;
+        }
+
+        /* DETAILS */
+        .details-section {
+            padding: 10px 5px;
+        }
+
+        .status {
+            display: inline-block;
+            background: #eaf8ef;
+            color: #159447;
+            padding: 7px 13px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .title {
+            font-size: 32px;
+            color: #17211b;
+            margin-bottom: 10px;
+        }
+
+        .brand {
+            color: #64748b;
+            font-size: 16px;
+            margin-bottom: 25px;
+        }
+
+        .value-box {
+            background: #f1faf4;
+            border: 1px solid #d9f0df;
+            padding: 18px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+        }
+
+        .value-label {
+            color: #64748b;
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+
+        .value {
+            color: #159447;
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 25px;
+        }
+
+        .info-box {
+            background: #f8faf9;
+            padding: 14px;
+            border-radius: 10px;
+        }
+
+        .info-label {
+            color: #64748b;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            color: #1f2937;
+            font-weight: 600;
+        }
+
+        .location {
+            color: #159447;
+            font-weight: 600;
+            margin-bottom: 25px;
+        }
+
+        .description-title {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .description {
+            color: #64748b;
+            line-height: 1.7;
+            margin-bottom: 25px;
+        }
+
+        .owner-box {
+            border-top: 1px solid #e5e7eb;
+            padding-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .owner-title {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 5px;
+        }
+
+        .owner-name {
+            font-size: 17px;
+            font-weight: 700;
+        }
+
+        /* BUTTONS */
+        .swap-btn {
+            width: 100%;
+            border: none;
+            background: #159447;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .swap-btn:hover {
+            background: #107c3a;
+        }
+
+        .swap-btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .message {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 9px;
+            display: none;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .success {
+            display: block;
+            background: #eaf8ef;
+            color: #15803d;
+        }
+
+        .error {
+            display: block;
+            background: #fef2f2;
+            color: #dc2626;
+        }
+
+        /* LOADING */
+        .loading {
+            background: white;
+            padding: 60px;
+            text-align: center;
+            border-radius: 16px;
+            color: #64748b;
+        }
+
+        /* MOBILE */
+        @media (max-width: 850px) {
+
+            .detail-card {
+                grid-template-columns: 1fr;
+            }
+
+            .main-image {
+                height: 400px;
+            }
+        }
+
+        @media (max-width: 700px) {
+
+            .sidebar {
+                width: 70px;
+                padding: 20px 8px;
+            }
+
+            .logo {
+                font-size: 0;
+                text-align: center;
+            }
+
+            .logo::after {
+                content: "C";
+                font-size: 25px;
+            }
+
+            .menu a {
+                font-size: 0;
+                text-align: center;
+                padding: 13px 5px;
+            }
+
+            .main {
+                margin-left: 70px;
+                width: calc(100% - 70px);
+                padding: 20px;
+            }
+
+            .topbar {
+                gap: 10px;
+            }
+
+            .detail-card {
+                padding: 18px;
+            }
+
+            .main-image {
+                height: 330px;
+            }
+
+            .title {
+                font-size: 25px;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="logo">
+            ClothSwap
+        </div>
+
+        <nav class="menu">
+
+            <a href="dashboard.html">🏠 Dashboard</a>
+
+            <a href="profile.html">👤 Profile</a>
+
+            <a href="add-item.html">➕ Add Clothing</a>
+
+            <a href="listings.html" class="active">👕 Listings</a>
+
+            <a href="swap-requests.html">🔄 Swap Requests</a>
+
+            <a href="chat.html">💬 Chat</a>
+
+            <a href="swap-calculator.html">🧮 Swap Calculator</a>
+
+            <a href="location-matching.html">📍 Find Nearby</a>
+
+            <a href="admin.html">⚙️ Admin</a>
+
+        </nav>
+
+    </aside>
+
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <div class="topbar">
+
+            <a href="listings.html" class="back-btn">
+                ← Back to Listings
+            </a>
+
+            <a href="profile.html" class="profile-btn">
+                My Profile
+            </a>
+
+        </div>
+
+
+        <div id="content">
+
+            <div class="loading">
+                Loading item details...
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<script>
+
+    let currentItem = null;
+    let currentUser = null;
+
+
+    async function loadItem() {
+
+        const params = new URLSearchParams(window.location.search);
+
+        const itemId = params.get("id");
+
+
+        if (!itemId) {
+
+            showError("No clothing item selected.");
+
+            return;
+        }
+
+
+        try {
+
+            /*
+             * Load current logged-in user
+             */
+            const userResponse =
+                await fetch("/api/auth/me", {
+                    credentials: "include"
+                });
+
+
+            if (userResponse.ok) {
+
+                currentUser =
+                    await userResponse.json();
+
+            }
+
+
+            /*
+             * Load clothing item
+             */
+            const response =
+                await fetch(
+                    `/api/items/${encodeURIComponent(itemId)}`,
+                    {
+                        credentials: "include"
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                if (response.status === 404) {
+                    showError("Clothing item not found.");
+                    return;
+                }
+
+                if (response.status === 401) {
+                    window.location.href = "login.html";
+                    return;
+                }
+
+                throw new Error("Unable to load item.");
+
+            }
+
+
+            currentItem =
+                await response.json();
+
+
+            displayItem(currentItem);
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            showError("Unable to load clothing details.");
+
+        }
+
+    }
+
+
+    function displayItem(item) {
+
+        const content =
+            document.getElementById("content");
+
+
+        const image =
+            item.imageUrl ||
+            "https://via.placeholder.com/700x600?text=No+Image";
+
+
+        const isOwner =
+            currentUser &&
+            currentUser.id &&
+            item.ownerId &&
+            Number(currentUser.id) === Number(item.ownerId);
+
+
+        const unavailable =
+            item.status &&
+            item.status.toUpperCase() !== "AVAILABLE";
+
+
+        content.innerHTML = `
+
+            <div class="detail-card">
+
+                <!-- IMAGE -->
+
+                <div class="image-section">
+
+                    <img
+                        src="${escapeHtml(image)}"
+                        class="main-image"
+                        alt="Clothing item"
+                        onerror="
+                            this.src='https://via.placeholder.com/700x600?text=No+Image'
+                        "
+                    >
+
+                </div>
+
+
+                <!-- DETAILS -->
+
+                <div class="details-section">
+
+                    <span class="status">
+
+                        ${escapeHtml(
+                            item.status || "AVAILABLE"
+                        )}
+
+                    </span>
+
+
+                    <h1 class="title">
+
+                        ${escapeHtml(
+                            item.title || "Clothing Item"
+                        )}
+
+                    </h1>
+
+
+                    <div class="brand">
+
+                        ${escapeHtml(
+                            item.brand || "Brand not specified"
+                        )}
+
+                    </div>
+
+
+                    <!-- VALUE -->
+
+                    <div class="value-box">
+
+                        <div class="value-label">
+                            Estimated Swap Value
+                        </div>
+
+                        <div class="value">
+                            ₹${item.estimatedValue || 0}
+                        </div>
+
+                    </div>
+
+
+                    <!-- INFO -->
+
+                    <div class="info-grid">
+
+                        <div class="info-box">
+
+                            <div class="info-label">
+                                Category
+                            </div>
+
+                            <div class="info-value">
+                                ${escapeHtml(
+                                    item.category || "N/A"
+                                )}
+                            </div>
+
+                        </div>
+
+
+                        <div class="info-box">
+
+                            <div class="info-label">
+                                Size
+                            </div>
+
+                            <div class="info-value">
+                                ${escapeHtml(
+                                    item.size || "N/A"
+                                )}
+                            </div>
+
+                        </div>
+
+
+                        <div class="info-box">
+
+                            <div class="info-label">
+                                Condition
+                            </div>
+
+                            <div class="info-value">
+                                ${escapeHtml(
+                                    item.condition || "N/A"
+                                )}
+                            </div>
+
+                        </div>
+
+
+                        <div class="info-box">
+
+                            <div class="info-label">
+                                Availability
+                            </div>
+
+                            <div class="info-value">
+                                ${escapeHtml(
+                                    item.status || "AVAILABLE"
+                                )}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="location">
+
+                        📍
+                        ${escapeHtml(
+                            item.location || "Location not specified"
+                        )}
+
+                    </div>
+
+
+                    <!-- DESCRIPTION -->
+
+                    <h3 class="description-title">
+                        Description
+                    </h3>
+
+                    <p class="description">
+
+                        ${escapeHtml(
+                            item.description ||
+                            "No description provided."
+                        )}
+
+                    </p>
+
+
+                    <!-- OWNER -->
+
+                    <div class="owner-box">
+
+                        <div class="owner-title">
+                            Listed by
+                        </div>
+
+                        <div class="owner-name">
+
+                            User #${escapeHtml(
+                                item.ownerId || "Unknown"
+                            )}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ACTION -->
+
+                    <button
+                        id="swapButton"
+                        class="swap-btn"
+                        onclick="sendSwapRequest()"
+                        ${isOwner || unavailable ? "disabled" : ""}
+                    >
+
+                        ${
+                            isOwner
+                            ? "This Is Your Listing"
+                            : unavailable
+                            ? "Item Not Available"
+                            : "🔄 Send Swap Request"
+                        }
+
+                    </button>
+
+
+                    <div id="message" class="message"></div>
+
+                </div>
+
+            </div>
+
+        `;
+
+    }
+
+
+    async function sendSwapRequest() {
+
+        if (!currentItem) {
+            return;
+        }
+
+
+        if (!currentUser) {
+
+            window.location.href = "login.html";
+
+            return;
+        }
+
+
+        if (
+            !currentItem.ownerId ||
+            Number(currentItem.ownerId) ===
+            Number(currentUser.id)
+        ) {
+
+            showMessage(
+                "You cannot send a swap request for your own item.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        if (
+            currentItem.status &&
+            currentItem.status.toUpperCase() !== "AVAILABLE"
+        ) {
+
+            showMessage(
+                "This item is no longer available.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        const button =
+            document.getElementById("swapButton");
+
+
+        button.disabled = true;
+
+        button.textContent =
+            "Sending Request...";
+
+
+        try {
+
+            /*
+             * Existing backend:
+             * POST /api/swaps
+             */
+
+            const response =
+                await fetch("/api/swaps", {
+
+                    method: "POST",
+
+                    credentials: "include",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        ownerId: currentItem.ownerId,
+
+                        itemId: currentItem.id,
+
+                        message:
+                            "I am interested in swapping for this item."
+
+                    })
+
+                });
+
+
+            const text =
+                await response.text();
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    text || "Unable to send swap request."
+                );
+
+            }
+
+
+            showMessage(
+                "Swap request sent successfully!",
+                "success"
+            );
+
+
+            button.textContent =
+                "✓ Request Sent";
+
+
+            setTimeout(() => {
+
+                window.location.href =
+                    "swap-requests.html";
+
+            }, 1200);
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            showMessage(
+                error.message ||
+                "Unable to send swap request.",
+                "error"
+            );
+
+
+            button.disabled = false;
+
+            button.textContent =
+                "🔄 Send Swap Request";
+
+        }
+
+    }
+
+
+    function showMessage(message, type) {
+
+        const element =
+            document.getElementById("message");
+
+
+        if (!element) {
+            return;
+        }
+
+
+        element.textContent = message;
+
+        element.className =
+            "message " + type;
+
+    }
+
+
+    function showError(message) {
+
+        document.getElementById("content").innerHTML = `
+
+            <div class="loading">
+
+                <h2 style="color:#dc2626;">
+                    ${escapeHtml(message)}
+                </h2>
+
+                <br>
+
+                <a
+                    href="listings.html"
+                    class="back-btn">
+                    ← Back to Listings
+                </a>
+
+            </div>
+
+        `;
+
+    }
+
+
+    function escapeHtml(value) {
+
+        return String(value)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+
+    }
+
+
+    loadItem();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,2180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Panel - Clothing Exchange</title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f6fa;
+            color: #333;
+        }
+
+
+        .navbar {
+            background: #667eea;
+            color: white;
+            padding: 18px 35px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            box-shadow:
+                0 3px 10px rgba(0,0,0,0.12);
+        }
+
+
+        .navbar h2 {
+            margin: 0;
+        }
+
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+
+        .logout-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+
+        .logout-btn:hover {
+            background: #c82333;
+        }
+
+
+        .container {
+            max-width: 1250px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+
+        /* =========================
+           STATISTICS
+        ========================= */
+
+        .stats {
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 20px;
+
+            margin-bottom: 25px;
+        }
+
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+
+            border-radius: 12px;
+
+            text-align: center;
+
+            box-shadow:
+                0 4px 15px
+                rgba(0,0,0,0.08);
+        }
+
+
+        .stat-card h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+
+        .stat-number {
+            font-size: 35px;
+            font-weight: bold;
+        }
+
+
+        /* =========================
+           DISPUTE MINI STATS
+        ========================= */
+
+        .dispute-stats {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 15px;
+
+            margin-bottom: 25px;
+        }
+
+
+        .mini-card {
+            background: white;
+            padding: 18px;
+
+            border-radius: 10px;
+
+            text-align: center;
+
+            box-shadow:
+                0 3px 12px
+                rgba(0,0,0,0.06);
+        }
+
+
+        .mini-card strong {
+            display: block;
+            font-size: 25px;
+            margin-top: 8px;
+        }
+
+
+        .open-number {
+            color: #f39c12;
+        }
+
+
+        .resolved-number {
+            color: #28a745;
+        }
+
+
+        .rejected-number {
+            color: #dc3545;
+        }
+
+
+        /* =========================
+           SECTION
+        ========================= */
+
+        .section {
+            background: white;
+
+            padding: 25px;
+
+            border-radius: 12px;
+
+            margin-bottom: 30px;
+
+            box-shadow:
+                0 4px 15px
+                rgba(0,0,0,0.08);
+        }
+
+
+        .section h2 {
+            margin-top: 0;
+            color: #667eea;
+        }
+
+
+        /* =========================
+           TABLE
+        ========================= */
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+
+        th,
+        td {
+            padding: 12px;
+
+            border-bottom:
+                1px solid #ddd;
+
+            text-align: left;
+
+            vertical-align: top;
+        }
+
+
+        th {
+            background: #f0f2ff;
+        }
+
+
+        /* =========================
+           BUTTONS
+        ========================= */
+
+        button {
+            border: none;
+
+            padding: 7px 12px;
+
+            border-radius: 5px;
+
+            cursor: pointer;
+
+            font-weight: bold;
+        }
+
+
+        .delete-btn {
+            background: #e74c3c;
+            color: white;
+        }
+
+
+        .delete-btn:hover {
+            background: #c0392b;
+        }
+
+
+        .resolve-btn {
+            background: #28a745;
+            color: white;
+        }
+
+
+        .resolve-btn:hover {
+            background: #218838;
+        }
+
+
+        .reject-btn {
+            background: #dc3545;
+            color: white;
+        }
+
+
+        .reject-btn:hover {
+            background: #c82333;
+        }
+
+
+        .reopen-btn {
+            background: #f39c12;
+            color: white;
+        }
+
+
+        .reopen-btn:hover {
+            background: #d68910;
+        }
+
+
+        .action-buttons {
+            display: flex;
+            gap: 7px;
+            flex-wrap: wrap;
+        }
+
+
+        /* =========================
+           STATUS
+        ========================= */
+
+        .status {
+            display: inline-block;
+
+            padding: 6px 10px;
+
+            border-radius: 15px;
+
+            font-size: 12px;
+
+            font-weight: bold;
+        }
+
+
+        .status-open {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+
+        .status-resolved {
+            background: #d4edda;
+            color: #155724;
+        }
+
+
+        .status-rejected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+
+        .description {
+            max-width: 300px;
+
+            white-space: normal;
+
+            word-break: break-word;
+        }
+
+
+        .empty {
+            text-align: center;
+
+            padding: 20px;
+
+            color: #777;
+        }
+
+
+        .error {
+            color: #dc3545;
+
+            text-align: center;
+
+            padding: 20px;
+        }
+
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+        }
+
+
+        @media (max-width: 900px) {
+
+            .stats {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+
+            .dispute-stats {
+                grid-template-columns:
+                    1fr;
+            }
+
+        }
+
+
+        @media (max-width: 600px) {
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+
+            .navbar {
+                padding: 15px 20px;
+
+                flex-direction: column;
+
+                gap: 12px;
+
+                text-align: center;
+            }
+
+
+            .navbar-right {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+
+            .container {
+                padding: 10px;
+            }
+
+
+            .section {
+                padding: 18px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     NAVBAR
+========================= -->
+
+<nav class="navbar">
+
+    <h2>
+        Clothing Exchange - Admin
+    </h2>
+
+
+    <div class="navbar-right">
+
+        <a href="/dashboard.html">
+            Dashboard
+        </a>
+
+
+        <button
+            class="logout-btn"
+            onclick="logoutAdmin()">
+
+            Logout
+
+        </button>
+
+    </div>
+
+</nav>
+
+
+<div class="container">
+
+
+    <h1>
+        Admin Panel
+    </h1>
+
+
+    <!-- =========================
+         MAIN STATISTICS
+    ========================= -->
+
+    <div class="stats">
+
+
+        <div class="stat-card">
+
+            <h3>
+                👤 Total Users
+            </h3>
+
+            <div
+                id="userCount"
+                class="stat-number">
+
+                0
+
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <h3>
+                👕 Clothing Items
+            </h3>
+
+            <div
+                id="itemCount"
+                class="stat-number">
+
+                0
+
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <h3>
+                🔄 Swap Requests
+            </h3>
+
+            <div
+                id="swapCount"
+                class="stat-number">
+
+                0
+
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <h3>
+                ⚠️ Disputes
+            </h3>
+
+            <div
+                id="disputeCount"
+                class="stat-number">
+
+                0
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         DISPUTE STATUS
+    ========================= -->
+
+    <div class="dispute-stats">
+
+
+        <div class="mini-card">
+
+            Open Disputes
+
+            <strong
+                id="openDisputeCount"
+                class="open-number">
+
+                0
+
+            </strong>
+
+        </div>
+
+
+        <div class="mini-card">
+
+            Resolved Disputes
+
+            <strong
+                id="resolvedDisputeCount"
+                class="resolved-number">
+
+                0
+
+            </strong>
+
+        </div>
+
+
+        <div class="mini-card">
+
+            Rejected Disputes
+
+            <strong
+                id="rejectedDisputeCount"
+                class="rejected-number">
+
+                0
+
+            </strong>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =========================
+         USERS
+    ========================= -->
+
+    <div class="section">
+
+        <h2>
+            👤 Manage Users
+        </h2>
+
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Location</th>
+                        <th>Role</th>
+                        <th>Action</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="usersTable">
+
+                    <tr>
+
+                        <td
+                            colspan="7"
+                            class="loading">
+
+                            Loading users...
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         CLOTHING ITEMS
+    ========================= -->
+
+    <div class="section">
+
+        <h2>
+            👕 Manage Clothing Items
+        </h2>
+
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Brand</th>
+                        <th>Value</th>
+                        <th>Location</th>
+                        <th>Action</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="itemsTable">
+
+                    <tr>
+
+                        <td
+                            colspan="7"
+                            class="loading">
+
+                            Loading clothing items...
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         SWAP REQUESTS
+    ========================= -->
+
+    <div class="section">
+
+        <h2>
+            🔄 Manage Swap Requests
+        </h2>
+
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>ID</th>
+                        <th>Requester</th>
+                        <th>Owner</th>
+                        <th>Requested Item</th>
+                        <th>Offered Item</th>
+                        <th>Status</th>
+                        <th>Action</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="swapsTable">
+
+                    <tr>
+
+                        <td
+                            colspan="7"
+                            class="loading">
+
+                            Loading swap requests...
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         DISPUTES
+    ========================= -->
+
+    <div class="section">
+
+        <h2>
+            ⚠️ Dispute Management
+        </h2>
+
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>ID</th>
+                        <th>Reporter</th>
+                        <th>Swap Request</th>
+                        <th>Issue</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th>Resolved</th>
+                        <th>Action</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="disputesTable">
+
+                    <tr>
+
+                        <td
+                            colspan="9"
+                            class="loading">
+
+                            Loading disputes...
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<script>
+
+
+    // =====================================================
+    // ADMIN PAGE SECURITY GUARD
+    // =====================================================
+
+    async function checkAdminAccess() {
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/auth/me",
+                    {
+                        method: "GET",
+                        credentials: "same-origin"
+                    }
+                );
+
+
+            // Not logged in
+            if (!response.ok) {
+
+                window.location.href =
+                    "/login.html";
+
+                return false;
+            }
+
+
+            const user =
+                await response.json();
+
+
+            // Check ADMIN role
+            if (
+                !user.role ||
+                user.role.toUpperCase() !== "ADMIN"
+            ) {
+
+                alert(
+                    "Access denied. Admin only."
+                );
+
+
+                window.location.href =
+                    "/dashboard.html";
+
+
+                return false;
+            }
+
+
+            console.log(
+                "Admin authentication successful."
+            );
+
+
+            return true;
+
+
+        } catch (error) {
+
+            console.error(
+                "Admin authentication check failed:",
+                error
+            );
+
+
+            window.location.href =
+                "/login.html";
+
+
+            return false;
+        }
+
+    }
+
+
+    // =====================================================
+    // STATISTICS
+    // =====================================================
+
+    async function loadStatistics() {
+
+        try {
+
+            const responses =
+                await Promise.all([
+
+                    fetch(
+                        "/api/admin/users/count"
+                    ),
+
+                    fetch(
+                        "/api/admin/items/count"
+                    ),
+
+                    fetch(
+                        "/api/admin/swaps/count"
+                    ),
+
+                    fetch(
+                        "/api/admin/disputes/count"
+                    ),
+
+                    fetch(
+                        "/api/admin/disputes/open/count"
+                    ),
+
+                    fetch(
+                        "/api/admin/disputes/resolved/count"
+                    ),
+
+                    fetch(
+                        "/api/admin/disputes/rejected/count"
+                    )
+
+                ]);
+
+
+            if (
+                responses.some(
+                    response =>
+                        !response.ok
+                )
+            ) {
+
+                throw new Error(
+                    "Failed to load statistics"
+                );
+            }
+
+
+            const values =
+                await Promise.all(
+                    responses.map(
+                        response =>
+                            response.json()
+                    )
+                );
+
+
+            document.getElementById(
+                "userCount"
+            ).textContent =
+                values[0];
+
+
+            document.getElementById(
+                "itemCount"
+            ).textContent =
+                values[1];
+
+
+            document.getElementById(
+                "swapCount"
+            ).textContent =
+                values[2];
+
+
+            document.getElementById(
+                "disputeCount"
+            ).textContent =
+                values[3];
+
+
+            document.getElementById(
+                "openDisputeCount"
+            ).textContent =
+                values[4];
+
+
+            document.getElementById(
+                "resolvedDisputeCount"
+            ).textContent =
+                values[5];
+
+
+            document.getElementById(
+                "rejectedDisputeCount"
+            ).textContent =
+                values[6];
+
+
+        } catch (error) {
+
+            console.error(
+                "Statistics error:",
+                error
+            );
+
+        }
+
+    }
+
+
+    // =====================================================
+    // USERS
+    // =====================================================
+
+    async function loadUsers() {
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/admin/users"
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Unable to load users"
+                );
+            }
+
+
+            const users =
+                await response.json();
+
+
+            const table =
+                document.getElementById(
+                    "usersTable"
+                );
+
+
+            table.innerHTML = "";
+
+
+            if (!users.length) {
+
+                table.innerHTML = `
+
+                    <tr>
+
+                        <td
+                            colspan="7"
+                            class="empty">
+
+                            No users found.
+
+                        </td>
+
+                    </tr>
+
+                `;
+
+                return;
+            }
+
+
+            users.forEach(user => {
+
+                const row =
+                    document.createElement(
+                        "tr"
+                    );
+
+
+                row.innerHTML = `
+
+                    <td>
+                        ${user.id}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(user.name)}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(user.email)}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(
+                            user.phone || "-"
+                        )}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(
+                            user.location || "-"
+                        )}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(
+                            user.role || "USER"
+                        )}
+                    </td>
+
+                    <td>
+
+                        <button
+                            class="delete-btn"
+                            onclick="deleteUser(${user.id})">
+
+                            Delete
+
+                        </button>
+
+                    </td>
+
+                `;
+
+
+                table.appendChild(row);
+
+            });
+
+
+        } catch (error) {
+
+            console.error(
+                "Users error:",
+                error
+            );
+
+
+            document.getElementById(
+                "usersTable"
+            ).innerHTML = `
+
+                <tr>
+
+                    <td
+                        colspan="7"
+                        class="error">
+
+                        Unable to load users.
+
+                    </td>
+
+                </tr>
+
+            `;
+
+        }
+
+    }
+
+
+    // =====================================================
+    // CLOTHING ITEMS
+    // =====================================================
+
+    async function loadItems() {
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/admin/items"
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Unable to load items"
+                );
+            }
+
+
+            const items =
+                await response.json();
+
+
+            const table =
+                document.getElementById(
+                    "itemsTable"
+                );
+
+
+            table.innerHTML = "";
+
+
+            if (!items.length) {
+
+                table.innerHTML = `
+
+                    <tr>
+
+                        <td
+                            colspan="7"
+                            class="empty">
+
+                            No clothing items found.
+
+                        </td>
+
+                    </tr>
+
+                `;
+
+                return;
+            }
+
+
+            items.forEach(item => {
+
+                const row =
+                    document.createElement(
+                        "tr"
+                    );
+
+
+                row.innerHTML = `
+
+                    <td>
+                        ${item.id}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(
+                            item.title
+                        )}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(
+                            item.category
+                        )}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(
+                            item.brand || "-"
+                        )}
+                    </td>
+
+                    <td>
+                        ₹${item.estimatedValue || 0}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(
+                            item.location || "-"
+                        )}
+                    </td>
+
+                    <td>
+
+                        <button
+                            class="delete-btn"
+                            onclick="deleteItem(${item.id})">
+
+                            Delete
+
+                        </button>
+
+                    </td>
+
+                `;
+
+
+                table.appendChild(row);
+
+            });
+
+
+        } catch (error) {
+
+            console.error(
+                "Items error:",
+                error
+            );
+
+
+            document.getElementById(
+                "itemsTable"
+            ).innerHTML = `
+
+                <tr>
+
+                    <td
+                        colspan="7"
+                        class="error">
+
+                        Unable to load clothing items.
+
+                    </td>
+
+                </tr>
+
+            `;
+
+        }
+
+    }
+
+
+    // =====================================================
+    // SWAPS
+    // =====================================================
+
+    async function loadSwaps() {
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/admin/swaps"
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Unable to load swaps"
+                );
+            }
+
+
+            const swaps =
+                await response.json();
+
+
+            const table =
+                document.getElementById(
+                    "swapsTable"
+                );
+
+
+            table.innerHTML = "";
+
+
+            if (!swaps.length) {
+
+                table.innerHTML = `
+
+                    <tr>
+
+                        <td
+                            colspan="7"
+                            class="empty">
+
+                            No swap requests found.
+
+                        </td>
+
+                    </tr>
+
+                `;
+
+                return;
+            }
+
+
+            swaps.forEach(swap => {
+
+                const row =
+                    document.createElement(
+                        "tr"
+                    );
+
+
+                row.innerHTML = `
+
+                    <td>
+                        ${swap.id}
+                    </td>
+
+                    <td>
+                        ${swap.requesterId}
+                    </td>
+
+                    <td>
+                        ${swap.ownerId}
+                    </td>
+
+                    <td>
+                        ${swap.requestedItemId}
+                    </td>
+
+                    <td>
+                        ${swap.offeredItemId}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(
+                            swap.status || "-"
+                        )}
+                    </td>
+
+                    <td>
+
+                        <button
+                            class="delete-btn"
+                            onclick="deleteSwap(${swap.id})">
+
+                            Delete
+
+                        </button>
+
+                    </td>
+
+                `;
+
+
+                table.appendChild(row);
+
+            });
+
+
+        } catch (error) {
+
+            console.error(
+                "Swaps error:",
+                error
+            );
+
+
+            document.getElementById(
+                "swapsTable"
+            ).innerHTML = `
+
+                <tr>
+
+                    <td
+                        colspan="7"
+                        class="error">
+
+                        Unable to load swap requests.
+
+                    </td>
+
+                </tr>
+
+            `;
+
+        }
+
+    }
+
+
+    // =====================================================
+    // DISPUTES
+    // =====================================================
+
+    async function loadDisputes() {
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/admin/disputes"
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Failed to load disputes"
+                );
+            }
+
+
+            const disputes =
+                await response.json();
+
+
+            const table =
+                document.getElementById(
+                    "disputesTable"
+                );
+
+
+            table.innerHTML = "";
+
+
+            if (!disputes.length) {
+
+                table.innerHTML = `
+
+                    <tr>
+
+                        <td
+                            colspan="9"
+                            class="empty">
+
+                            No disputes found.
+
+                        </td>
+
+                    </tr>
+
+                `;
+
+                return;
+            }
+
+
+            disputes.forEach(dispute => {
+
+                const row =
+                    document.createElement(
+                        "tr"
+                    );
+
+
+                let statusClass =
+                    "status-open";
+
+
+                if (
+                    dispute.status ===
+                    "RESOLVED"
+                ) {
+
+                    statusClass =
+                        "status-resolved";
+
+                }
+
+
+                if (
+                    dispute.status ===
+                    "REJECTED"
+                ) {
+
+                    statusClass =
+                        "status-rejected";
+
+                }
+
+
+                row.innerHTML = `
+
+                    <td>
+                        ${dispute.id}
+                    </td>
+
+                    <td>
+                        ${dispute.reporterId}
+                    </td>
+
+                    <td>
+                        #${dispute.swapRequestId}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(
+                            dispute.subject
+                        )}
+                    </td>
+
+                    <td class="description">
+                        ${escapeHtml(
+                            dispute.description
+                        )}
+                    </td>
+
+                    <td>
+
+                        <span
+                            class="status ${statusClass}">
+
+                            ${escapeHtml(
+                                dispute.status
+                            )}
+
+                        </span>
+
+                    </td>
+
+                    <td>
+                        ${formatDate(
+                            dispute.createdAt
+                        )}
+                    </td>
+
+                    <td>
+                        ${formatDate(
+                            dispute.resolvedAt
+                        )}
+                    </td>
+
+                    <td>
+
+                        <div
+                            class="action-buttons">
+
+                            ${
+                                dispute.status !==
+                                "RESOLVED"
+                                ?
+
+                                `
+
+                                <button
+                                    class="resolve-btn"
+                                    onclick="updateDisputeStatus(
+                                        ${dispute.id},
+                                        'RESOLVED'
+                                    )">
+
+                                    Resolve
+
+                                </button>
+
+                                `
+
+                                :
+
+                                ""
+                            }
+
+
+                            ${
+                                dispute.status !==
+                                "REJECTED"
+                                ?
+
+                                `
+
+                                <button
+                                    class="reject-btn"
+                                    onclick="updateDisputeStatus(
+                                        ${dispute.id},
+                                        'REJECTED'
+                                    )">
+
+                                    Reject
+
+                                </button>
+
+                                `
+
+                                :
+
+                                ""
+                            }
+
+
+                            ${
+                                dispute.status !==
+                                "OPEN"
+                                ?
+
+                                `
+
+                                <button
+                                    class="reopen-btn"
+                                    onclick="updateDisputeStatus(
+                                        ${dispute.id},
+                                        'OPEN'
+                                    )">
+
+                                    Reopen
+
+                                </button>
+
+                                `
+
+                                :
+
+                                ""
+                            }
+
+
+                            <button
+                                class="delete-btn"
+                                onclick="deleteDispute(
+                                    ${dispute.id}
+                                )">
+
+                                Delete
+
+                            </button>
+
+                        </div>
+
+                    </td>
+
+                `;
+
+
+                table.appendChild(row);
+
+            });
+
+
+        } catch (error) {
+
+            console.error(
+                "Dispute error:",
+                error
+            );
+
+
+            document.getElementById(
+                "disputesTable"
+            ).innerHTML = `
+
+                <tr>
+
+                    <td
+                        colspan="9"
+                        class="error">
+
+                        Unable to load disputes.
+
+                    </td>
+
+                </tr>
+
+            `;
+
+        }
+
+    }
+
+
+    // =====================================================
+    // UPDATE DISPUTE STATUS
+    // =====================================================
+
+    async function updateDisputeStatus(
+        id,
+        status
+    ) {
+
+        let actionText =
+            status === "RESOLVED"
+                ? "resolve"
+                : status === "REJECTED"
+                    ? "reject"
+                    : "reopen";
+
+
+        if (
+            !confirm(
+                `Are you sure you want to ${actionText} this dispute?`
+            )
+        ) {
+
+            return;
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    `/api/admin/disputes/${id}/status?status=${encodeURIComponent(status)}`,
+                    {
+                        method: "PUT",
+                        credentials: "same-origin"
+                    }
+                );
+
+
+            const result =
+                await response.text();
+
+
+            if (!response.ok) {
+
+                alert(result);
+
+                return;
+            }
+
+
+            alert(
+                `Dispute ${actionText}ed successfully.`
+            );
+
+
+            await loadStatistics();
+
+            await loadDisputes();
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert(
+                "Unable to update dispute."
+            );
+
+        }
+
+    }
+
+
+    // =====================================================
+    // DELETE DISPUTE
+    // =====================================================
+
+    async function deleteDispute(id) {
+
+        if (
+            !confirm(
+                "Are you sure you want to delete this dispute?"
+            )
+        ) {
+
+            return;
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    `/api/admin/disputes/${id}`,
+                    {
+                        method: "DELETE",
+                        credentials: "same-origin"
+                    }
+                );
+
+
+            const result =
+                await response.text();
+
+
+            if (!response.ok) {
+
+                alert(result);
+
+                return;
+            }
+
+
+            alert(
+                "Dispute deleted successfully."
+            );
+
+
+            await loadStatistics();
+
+            await loadDisputes();
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert(
+                "Unable to delete dispute."
+            );
+
+        }
+
+    }
+
+
+    // =====================================================
+    // DELETE USER
+    // =====================================================
+
+    async function deleteUser(id) {
+
+        if (
+            !confirm(
+                "Are you sure you want to delete this user?"
+            )
+        ) {
+
+            return;
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    `/api/admin/users/${id}`,
+                    {
+                        method: "DELETE",
+                        credentials: "same-origin"
+                    }
+                );
+
+
+            const result =
+                await response.text();
+
+
+            if (!response.ok) {
+
+                alert(result);
+
+                return;
+            }
+
+
+            await loadStatistics();
+
+            await loadUsers();
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert(
+                "Unable to delete user."
+            );
+
+        }
+
+    }
+
+
+    // =====================================================
+    // DELETE ITEM
+    // =====================================================
+
+    async function deleteItem(id) {
+
+        if (
+            !confirm(
+                "Are you sure you want to delete this clothing item?"
+            )
+        ) {
+
+            return;
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    `/api/admin/items/${id}`,
+                    {
+                        method: "DELETE",
+                        credentials: "same-origin"
+                    }
+                );
+
+
+            const result =
+                await response.text();
+
+
+            if (!response.ok) {
+
+                alert(result);
+
+                return;
+            }
+
+
+            await loadStatistics();
+
+            await loadItems();
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert(
+                "Unable to delete clothing item."
+            );
+
+        }
+
+    }
+
+
+    // =====================================================
+    // DELETE SWAP
+    // =====================================================
+
+    async function deleteSwap(id) {
+
+        if (
+            !confirm(
+                "Are you sure you want to delete this swap request?"
+            )
+        ) {
+
+            return;
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    `/api/admin/swaps/${id}`,
+                    {
+                        method: "DELETE",
+                        credentials: "same-origin"
+                    }
+                );
+
+
+            const result =
+                await response.text();
+
+
+            if (!response.ok) {
+
+                alert(result);
+
+                return;
+            }
+
+
+            await loadStatistics();
+
+            await loadSwaps();
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert(
+                "Unable to delete swap request."
+            );
+
+        }
+
+    }
+
+
+    // =====================================================
+    // ADMIN LOGOUT
+    // =====================================================
+
+    async function logoutAdmin() {
+
+        try {
+
+            await fetch(
+                "/api/auth/logout",
+                {
+                    method: "POST",
+                    credentials: "same-origin"
+                }
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Logout error:",
+                error
+            );
+
+        }
+
+
+        localStorage.removeItem(
+            "loggedInUser"
+        );
+
+
+        window.location.href =
+            "/login.html";
+
+    }
+
+
+    // =====================================================
+    // HELPERS
+    // =====================================================
+
+    function formatDate(date) {
+
+        if (!date) {
+
+            return "-";
+        }
+
+
+        return new Date(date)
+            .toLocaleString("en-IN");
+
+    }
+
+
+    function escapeHtml(text) {
+
+        if (
+            text === null ||
+            text === undefined
+        ) {
+
+            return "";
+        }
+
+
+        const div =
+            document.createElement(
+                "div"
+            );
+
+
+        div.textContent =
+            String(text);
+
+
+        return div.innerHTML;
+
+    }
+
+
+    // =====================================================
+    // START ADMIN PANEL
+    // =====================================================
+
+    async function initializeAdminPanel() {
+
+        const isAdmin =
+            await checkAdminAccess();
+
+
+        if (!isAdmin) {
+
+            return;
+        }
+
+
+        // Only ADMIN reaches this point
+        await loadStatistics();
+
+        await loadUsers();
+
+        await loadItems();
+
+        await loadSwaps();
+
+        await loadDisputes();
+
+    }
+
+
+    // Start
+    initializeAdminPanel();
+
+
+</script>
+
+
+</body>
+
+</html>

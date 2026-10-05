@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Listings - ClothSwap</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f5f8f6;
+            color: #1f2937;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 240px;
+            background: #ffffff;
+            border-right: 1px solid #e5e7eb;
+            padding: 25px 15px;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: 700;
+            color: #159447;
+            padding: 0 15px 30px;
+        }
+
+        .menu {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .menu a {
+            text-decoration: none;
+            color: #64748b;
+            padding: 13px 15px;
+            border-radius: 10px;
+            transition: .2s;
+        }
+
+        .menu a:hover,
+        .menu a.active {
+            background: #eaf8ef;
+            color: #159447;
+            font-weight: 600;
+        }
+
+        /* MAIN */
+        .main {
+            margin-left: 240px;
+            width: calc(100% - 240px);
+            padding: 28px 35px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+        }
+
+        .topbar h1 {
+            font-size: 28px;
+            color: #17211b;
+        }
+
+        .topbar p {
+            color: #64748b;
+            margin-top: 7px;
+        }
+
+        .add-btn {
+            background: #159447;
+            color: white;
+            text-decoration: none;
+            padding: 12px 19px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .add-btn:hover {
+            background: #107c3a;
+        }
+
+        /* FILTER */
+        .filter-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 28px;
+            box-shadow: 0 3px 15px rgba(0,0,0,.05);
+        }
+
+        .filters {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr 1fr auto;
+            gap: 12px;
+        }
+
+        .filters input,
+        .filters select {
+            width: 100%;
+            padding: 12px 13px;
+            border: 1px solid #d1d5db;
+            border-radius: 9px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .filters input:focus,
+        .filters select:focus {
+            border-color: #159447;
+        }
+
+        .filter-btn {
+            border: none;
+            background: #159447;
+            color: white;
+            border-radius: 9px;
+            padding: 0 22px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .filter-btn:hover {
+            background: #107c3a;
+        }
+
+        /* HEADER */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .section-header h2 {
+            font-size: 21px;
+        }
+
+        #count {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        /* GRID */
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(235px, 1fr));
+            gap: 22px;
+        }
+
+        .item-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 3px 15px rgba(0,0,0,.05);
+            transition: .25s;
+        }
+
+        .item-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 9px 24px rgba(0,0,0,.10);
+        }
+
+        .image-container {
+            position: relative;
+            height: 210px;
+            background: #eef2f0;
+        }
+
+        .item-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .status {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: #eaf8ef;
+            color: #159447;
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .item-content {
+            padding: 17px;
+        }
+
+        .item-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 9px;
+            color: #17211b;
+        }
+
+        .details {
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .location {
+            color: #159447;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        .bottom-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 13px;
+        }
+
+        .value {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .view-btn {
+            text-decoration: none;
+            color: #159447;
+            background: #eaf8ef;
+            padding: 9px 13px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .view-btn:hover {
+            background: #159447;
+            color: white;
+        }
+
+        /* EMPTY */
+        .empty {
+            background: white;
+            border-radius: 16px;
+            padding: 60px 20px;
+            text-align: center;
+            color: #64748b;
+        }
+
+        .empty h3 {
+            color: #334155;
+            margin-bottom: 8px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #64748b;
+        }
+
+        /* MOBILE */
+        @media (max-width: 900px) {
+
+            .filters {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .filter-btn {
+                padding: 12px;
+            }
+        }
+
+        @media (max-width: 700px) {
+
+            .sidebar {
+                width: 70px;
+                padding: 20px 8px;
+            }
+
+            .logo {
+                font-size: 0;
+                text-align: center;
+            }
+
+            .logo::after {
+                content: "C";
+                font-size: 25px;
+            }
+
+            .menu a {
+                font-size: 0;
+                text-align: center;
+                padding: 13px 5px;
+            }
+
+            .main {
+                margin-left: 70px;
+                width: calc(100% - 70px);
+                padding: 20px;
+            }
+
+            .topbar {
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .topbar h1 {
+                font-size: 23px;
+            }
+
+            .add-btn {
+                white-space: nowrap;
+            }
+
+            .filters {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="logo">
+            ClothSwap
+        </div>
+
+        <nav class="menu">
+
+            <a href="dashboard.html">🏠 Dashboard</a>
+
+            <a href="profile.html">👤 Profile</a>
+
+            <a href="add-item.html">➕ Add Clothing</a>
+
+            <a href="listings.html" class="active">
+                👕 Listings
+            </a>
+
+            <a href="swap-requests.html">
+                🔄 Swap Requests
+            </a>
+
+            <a href="chat.html">
+                💬 Chat
+            </a>
+
+            <a href="swap-calculator.html">
+                🧮 Swap Calculator
+            </a>
+
+            <a href="location-matching.html">
+                📍 Find Nearby
+            </a>
+
+            <a href="admin.html">
+                ⚙️ Admin
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <div class="topbar">
+
+            <div>
+                <h1>Clothing Listings</h1>
+                <p>Discover clothes available for swapping.</p>
+            </div>
+
+            <a href="add-item.html" class="add-btn">
+                + Add Clothing
+            </a>
+
+        </div>
+
+
+        <!-- FILTER -->
+        <div class="filter-card">
+
+            <div class="filters">
+
+                <input
+                    type="text"
+                    id="search"
+                    placeholder="Search clothing..."
+                >
+
+                <select id="category">
+
+                    <option value="">All Categories</option>
+                    <option value="Shirt">Shirt</option>
+                    <option value="T-Shirt">T-Shirt</option>
+                    <option value="Jeans">Jeans</option>
+                    <option value="Jacket">Jacket</option>
+                    <option value="Dress">Dress</option>
+                    <option value="Kurta">Kurta</option>
+                    <option value="Saree">Saree</option>
+                    <option value="Shoes">Shoes</option>
+                    <option value="Hoodie">Hoodie</option>
+                    <option value="Other">Other</option>
+
+                </select>
+
+                <input
+                    type="text"
+                    id="location"
+                    placeholder="Location"
+                >
+
+                <button
+                    class="filter-btn"
+                    onclick="applyFilters()">
+                    Search
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- LISTINGS -->
+        <div class="section-header">
+
+            <h2>Available Clothing</h2>
+
+            <span id="count"></span>
+
+        </div>
+
+
+        <div id="results">
+
+            <div class="loading">
+                Loading listings...
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<script>
+
+    let allItems = [];
+
+
+    async function loadItems() {
+
+        try {
+
+            const response =
+                await fetch("/api/items/available", {
+                    credentials: "include"
+                });
+
+
+            if (!response.ok) {
+
+                if (response.status === 401) {
+                    alert("Please login first.");
+                    window.location.href = "login.html";
+                    return;
+                }
+
+                throw new Error("Failed to load listings.");
+            }
+
+
+            allItems = await response.json();
+
+            displayItems(allItems);
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            document.getElementById("results").innerHTML =
+                `
+                <div class="empty">
+
+                    <h3>Unable to load listings</h3>
+
+                    <p>Please try again.</p>
+
+                </div>
+                `;
+        }
+
+    }
+
+
+    function applyFilters() {
+
+        const search =
+            document.getElementById("search")
+                .value
+                .trim()
+                .toLowerCase();
+
+        const category =
+            document.getElementById("category")
+                .value
+                .toLowerCase();
+
+        const location =
+            document.getElementById("location")
+                .value
+                .trim()
+                .toLowerCase();
+
+
+        const filtered =
+            allItems.filter(item => {
+
+                const title =
+                    (item.title || "").toLowerCase();
+
+                const brand =
+                    (item.brand || "").toLowerCase();
+
+                const itemCategory =
+                    (item.category || "").toLowerCase();
+
+                const itemLocation =
+                    (item.location || "").toLowerCase();
+
+
+                const matchesSearch =
+                    !search ||
+                    title.includes(search) ||
+                    brand.includes(search);
+
+
+                const matchesCategory =
+                    !category ||
+                    itemCategory === category;
+
+
+                const matchesLocation =
+                    !location ||
+                    itemLocation.includes(location);
+
+
+                return (
+                    matchesSearch &&
+                    matchesCategory &&
+                    matchesLocation
+                );
+
+            });
+
+
+        displayItems(filtered);
+
+    }
+
+
+    function displayItems(items) {
+
+        const results =
+            document.getElementById("results");
+
+        const count =
+            document.getElementById("count");
+
+
+        count.textContent =
+            `${items.length} item${items.length !== 1 ? "s" : ""}`;
+
+
+        if (!items || items.length === 0) {
+
+            results.innerHTML =
+                `
+                <div class="empty">
+
+                    <h3>No clothing found</h3>
+
+                    <p>
+                        Try changing your search or filters.
+                    </p>
+
+                </div>
+                `;
+
+            return;
+        }
+
+
+        const grid =
+            document.createElement("div");
+
+        grid.className = "items-grid";
+
+
+        items.forEach(item => {
+
+            const card =
+                document.createElement("div");
+
+            card.className = "item-card";
+
+
+            const image =
+                item.imageUrl ||
+                "https://via.placeholder.com/500x400?text=No+Image";
+
+
+            card.innerHTML =
+                `
+
+                <div class="image-container">
+
+                    <img
+                        class="item-image"
+                        src="${escapeHtml(image)}"
+                        alt="Clothing item"
+                        onerror="
+                            this.src='https://via.placeholder.com/500x400?text=No+Image'
+                        "
+                    >
+
+                    <span class="status">
+                        ${escapeHtml(item.status || "AVAILABLE")}
+                    </span>
+
+                </div>
+
+
+                <div class="item-content">
+
+                    <div class="item-title">
+                        ${escapeHtml(item.title || "Clothing Item")}
+                    </div>
+
+
+                    <div class="details">
+
+                        ${escapeHtml(item.category || "N/A")}
+                        •
+                        Size ${escapeHtml(item.size || "N/A")}
+
+                        <br>
+
+                        Brand:
+                        ${escapeHtml(item.brand || "N/A")}
+
+                        <br>
+
+                        Condition:
+                        ${escapeHtml(item.condition || "N/A")}
+
+                    </div>
+
+
+                    <div class="location">
+
+                        📍
+                        ${escapeHtml(item.location || "Unknown")}
+
+                    </div>
+
+
+                    <div class="bottom-row">
+
+                        <div class="value">
+
+                            ₹${item.estimatedValue || 0}
+
+                        </div>
+
+
+                        <a
+                            href="item-detail.html?id=${item.id}"
+                            class="view-btn">
+
+                            View Item
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+                `;
+
+
+            grid.appendChild(card);
+
+        });
+
+
+        results.innerHTML = "";
+
+        results.appendChild(grid);
+
+    }
+
+
+    function escapeHtml(value) {
+
+        return String(value)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+
+    }
+
+
+    document
+        .getElementById("search")
+        .addEventListener("input", applyFilters);
+
+
+    document
+        .getElementById("category")
+        .addEventListener("change", applyFilters);
+
+
+    document
+        .getElementById("location")
+        .addEventListener("input", applyFilters);
+
+
+    loadItems();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login | Clothing Exchange Marketplace</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 20px;
+        }
+
+        .login-container {
+            width: 400px;
+            background: white;
+            padding: 35px;
+            border-radius: 16px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+        }
+
+        .logo {
+            text-align: center;
+            font-size: 42px;
+            margin-bottom: 8px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #777;
+            margin-bottom: 28px;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #444;
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .password-wrapper input {
+            padding-right: 45px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 19px;
+            user-select: none;
+        }
+
+        .forgot-password {
+            text-align: right;
+            margin-top: -8px;
+            margin-bottom: 22px;
+        }
+
+        .forgot-password a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 8px;
+            background: #667eea;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .login-btn:hover {
+            background: #5568d8;
+        }
+
+        #message {
+            margin-top: 15px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 25px 0;
+            color: #999;
+            font-size: 13px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: #ddd;
+        }
+
+        .register-link {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .register-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        /* =========================
+           FORGOT PASSWORD MODAL
+           ========================= */
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            z-index: 1000;
+        }
+
+        .modal-box {
+            width: 400px;
+            max-width: 100%;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            position: relative;
+        }
+
+        .modal-box h2 {
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .modal-box p {
+            color: #777;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .close-btn {
+            position: absolute;
+            right: 18px;
+            top: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #777;
+        }
+
+        .close-btn:hover {
+            color: #333;
+        }
+
+        .otp-section {
+            display: none;
+        }
+
+        .reset-section {
+            display: none;
+        }
+
+        .modal button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: #667eea;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .modal button:hover {
+            background: #5568d8;
+        }
+
+        .modal-message {
+            margin-top: 12px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            color: #667eea;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     LOGIN CONTAINER
+     ========================= -->
+
+<div class="login-container">
+
+    <div class="logo">👕</div>
+
+    <h1>Welcome Back</h1>
+
+    <p class="subtitle">
+        Login to Clothing Exchange Marketplace
+    </p>
+
+
+    <!-- LOGIN FORM -->
+
+    <form id="loginForm">
+
+        <div class="form-group">
+
+            <label for="email">
+                Email
+            </label>
+
+            <input
+                type="email"
+                id="email"
+                placeholder="Enter your email"
+                required>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="password">
+                Password
+            </label>
+
+            <div class="password-wrapper">
+
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Enter your password"
+                    required>
+
+                <span
+                    class="toggle-password"
+                    onclick="togglePassword()">
+
+                    👁️
+
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- FORGOT PASSWORD -->
+
+        <div class="forgot-password">
+
+            <a onclick="openForgotPassword()">
+                Forgot Password?
+            </a>
+
+        </div>
+
+
+        <button
+            type="submit"
+            class="login-btn">
+
+            Login
+
+        </button>
+
+    </form>
+
+
+    <p id="message"></p>
+
+
+    <div class="divider">
+        OR
+    </div>
+
+
+    <div class="register-link">
+
+        Don't have an account?
+
+        <a href="/register.html">
+            Create Account
+        </a>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================
+     FORGOT PASSWORD MODAL
+     ========================= -->
+
+<div
+    class="modal"
+    id="forgotModal">
+
+    <div class="modal-box">
+
+
+        <!-- CLOSE BUTTON -->
+
+        <span
+            class="close-btn"
+            onclick="closeForgotPassword()">
+
+            &times;
+
+        </span>
+
+
+
+        <!-- =========================
+             STEP 1: EMAIL
+             ========================= -->
+
+        <div id="emailSection">
+
+            <h2>
+                Forgot Password?
+            </h2>
+
+            <p>
+                Enter your registered email address.
+                We will send you an OTP.
+            </p>
+
+
+            <input
+                type="email"
+                id="forgotEmail"
+                placeholder="Enter your email"
+                autocomplete="email">
+
+
+            <button onclick="sendOTP()">
+
+                Send OTP
+
+            </button>
+
+        </div>
+
+
+
+        <!-- =========================
+             STEP 2: OTP
+             ========================= -->
+
+        <div
+            class="otp-section"
+            id="otpSection">
+
+            <h2>
+                Verify OTP
+            </h2>
+
+            <p>
+                Enter the 6-digit OTP sent to your email.
+            </p>
+
+
+            <input
+                type="text"
+                id="otp"
+                maxlength="6"
+                inputmode="numeric"
+                autocomplete="one-time-code"
+                placeholder="Enter 6-digit OTP">
+
+
+            <button onclick="verifyOTP()">
+
+                Verify OTP
+
+            </button>
+
+            <span
+                class="back-link"
+                onclick="backToEmail()">
+
+                ← Change Email
+
+            </span>
+
+        </div>
+
+
+
+        <!-- =========================
+             STEP 3: NEW PASSWORD
+             ========================= -->
+
+        <div
+            class="reset-section"
+            id="resetSection">
+
+            <h2>
+                Create New Password
+            </h2>
+
+            <p>
+                OTP verified. Enter your new password.
+            </p>
+
+
+            <input
+                type="password"
+                id="newPassword"
+                placeholder="New password"
+                autocomplete="new-password">
+
+
+            <br>
+            <br>
+
+
+            <input
+                type="password"
+                id="confirmPassword"
+                placeholder="Confirm password"
+                autocomplete="new-password">
+
+
+            <button onclick="resetPassword()">
+
+                Reset Password
+
+            </button>
+
+        </div>
+
+
+        <!-- MESSAGE -->
+
+        <p
+            id="forgotMessage"
+            class="modal-message">
+        </p>
+
+
+    </div>
+
+</div>
+
+
+
+<script>
+
+
+// ===============================
+// TOGGLE LOGIN PASSWORD
+// ===============================
+
+function togglePassword() {
+
+    const password =
+        document.getElementById("password");
+
+    if (password.type === "password") {
+
+        password.type = "text";
+
+    } else {
+
+        password.type = "password";
+
+    }
+
+}
+
+
+
+// ===============================
+// LOGIN
+// ===============================
+
+document
+    .getElementById("loginForm")
+    .addEventListener(
+        "submit",
+        async function(event) {
+
+            event.preventDefault();
+
+            const email =
+                document
+                    .getElementById("email")
+                    .value
+                    .trim()
+                    .toLowerCase();
+
+            const password =
+                document
+                    .getElementById("password")
+                    .value;
+
+            const message =
+                document
+                    .getElementById("message");
+
+            try {
+
+                message.style.color = "#667eea";
+
+                message.textContent =
+                    "Logging in...";
+
+
+                const response =
+                    await fetch(
+                        "/api/auth/login",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            credentials: "same-origin",
+
+                            body:
+                                JSON.stringify({
+                                    email: email,
+                                    password: password
+                                })
+                        }
+                    );
+
+
+                const result =
+                    await response.text();
+
+
+                if (response.ok) {
+
+                    const user =
+                        JSON.parse(result);
+
+
+                    localStorage.setItem(
+                        "loggedInUser",
+                        JSON.stringify(user)
+                    );
+
+
+                    message.style.color =
+                        "green";
+
+                    message.textContent =
+                        "Login successful! Welcome "
+                        + user.name
+                        + "!";
+
+
+                    setTimeout(
+                        function() {
+
+                            window.location.href =
+                                "/dashboard.html";
+
+                        },
+                        1000
+                    );
+
+
+                } else {
+
+                    message.style.color =
+                        "red";
+
+                    message.textContent =
+                        result;
+
+                }
+
+
+            } catch (error) {
+
+                console.error(
+                    "Login error:",
+                    error
+                );
+
+                message.style.color =
+                    "red";
+
+                message.textContent =
+                    "Unable to connect to server.";
+
+            }
+
+        }
+    );
+
+
+
+// ===============================
+// OPEN FORGOT PASSWORD
+// ===============================
+
+function openForgotPassword() {
+
+    document
+        .getElementById("forgotModal")
+        .style.display = "flex";
+
+}
+
+
+
+// ===============================
+// CLOSE FORGOT PASSWORD
+// ===============================
+
+function closeForgotPassword() {
+
+    document
+        .getElementById("forgotModal")
+        .style.display = "none";
+
+}
+
+
+
+// ===============================
+// BACK TO EMAIL
+// ===============================
+
+function backToEmail() {
+
+    document
+        .getElementById("emailSection")
+        .style.display = "block";
+
+    document
+        .getElementById("otpSection")
+        .style.display = "none";
+
+    document
+        .getElementById("resetSection")
+        .style.display = "none";
+
+    document
+        .getElementById("otp")
+        .value = "";
+
+    document
+        .getElementById("newPassword")
+        .value = "";
+
+    document
+        .getElementById("confirmPassword")
+        .value = "";
+
+    document
+        .getElementById("forgotMessage")
+        .textContent = "";
+
+}
+
+
+
+// ===============================
+// SEND OTP
+// ===============================
+
+async function sendOTP() {
+
+    const email =
+        document
+            .getElementById("forgotEmail")
+            .value
+            .trim()
+            .toLowerCase();
+
+    const message =
+        document
+            .getElementById("forgotMessage");
+
+
+    if (!email) {
+
+        message.style.color =
+            "red";
+
+        message.textContent =
+            "Please enter your email.";
+
+        return;
+
+    }
+
+
+    try {
+
+        message.style.color =
+            "#667eea";
+
+        message.textContent =
+            "Sending OTP...";
+
+
+        const response =
+            await fetch(
+                "/api/otp/send?email=" +
+                encodeURIComponent(email),
+                {
+                    method: "POST"
+                }
+            );
+
+
+        const result =
+            await response.text();
+
+
+        if (response.ok) {
+
+            message.style.color =
+                "green";
+
+            message.textContent =
+                "OTP sent successfully. Check your email.";
+
+
+            document
+                .getElementById("emailSection")
+                .style.display = "none";
+
+
+            document
+                .getElementById("otpSection")
+                .style.display = "block";
+
+
+        } else {
+
+            message.style.color =
+                "red";
+
+            message.textContent =
+                result;
+
+        }
+
+
+    } catch (error) {
+
+        console.error(
+            "OTP error:",
+            error
+        );
+
+        message.style.color =
+            "red";
+
+        message.textContent =
+            "Unable to connect to server.";
+
+    }
+
+}
+
+
+
+// ===============================
+// VERIFY OTP
+// ===============================
+
+async function verifyOTP() {
+
+    const email =
+        document
+            .getElementById("forgotEmail")
+            .value
+            .trim()
+            .toLowerCase();
+
+    const otp =
+        document
+            .getElementById("otp")
+            .value
+            .trim();
+
+    const message =
+        document
+            .getElementById("forgotMessage");
+
+
+    if (!otp || otp.length !== 6) {
+
+        message.style.color =
+            "red";
+
+        message.textContent =
+            "Enter a valid 6-digit OTP.";
+
+        return;
+
+    }
+
+
+    if (!/^\d{6}$/.test(otp)) {
+
+        message.style.color =
+            "red";
+
+        message.textContent =
+            "OTP must contain only numbers.";
+
+        return;
+
+    }
+
+
+    try {
+
+        message.style.color =
+            "#667eea";
+
+        message.textContent =
+            "Verifying OTP...";
+
+
+        const response =
+            await fetch(
+                "/api/otp/verify?email=" +
+                encodeURIComponent(email) +
+                "&otp=" +
+                encodeURIComponent(otp),
+                {
+                    method: "POST"
+                }
+            );
+
+
+        const result =
+            await response.text();
+
+
+        if (response.ok) {
+
+            message.style.color =
+                "green";
+
+            message.textContent =
+                "OTP verified successfully.";
+
+
+            document
+                .getElementById("otpSection")
+                .style.display = "none";
+
+
+            document
+                .getElementById("resetSection")
+                .style.display = "block";
+
+
+        } else {
+
+            message.style.color =
+                "red";
+
+            message.textContent =
+                result;
+
+        }
+
+
+    } catch (error) {
+
+        console.error(
+            "OTP verification error:",
+            error
+        );
+
+        message.style.color =
+            "red";
+
+        message.textContent =
+            "Unable to connect to server.";
+
+    }
+
+}
+
+
+
+// ===============================
+// RESET PASSWORD
+// OTP IS SENT TO BACKEND
+// ===============================
+
+async function resetPassword() {
+
+    const email =
+        document
+            .getElementById("forgotEmail")
+            .value
+            .trim()
+            .toLowerCase();
+
+    const otp =
+        document
+            .getElementById("otp")
+            .value
+            .trim();
+
+    const newPassword =
+        document
+            .getElementById("newPassword")
+            .value;
+
+    const confirmPassword =
+        document
+            .getElementById("confirmPassword")
+            .value;
+
+    const message =
+        document
+            .getElementById("forgotMessage");
+
+
+    if (!otp || otp.length !== 6) {
+
+        message.style.color =
+            "red";
+
+        message.textContent =
+            "Please enter a valid OTP.";
+
+        return;
+
+    }
+
+
+    if (!newPassword || !confirmPassword) {
+
+        message.style.color =
+            "red";
+
+        message.textContent =
+            "Please fill both password fields.";
+
+        return;
+
+    }
+
+
+    if (newPassword.length < 6) {
+
+        message.style.color =
+            "red";
+
+        message.textContent =
+            "Password must be at least 6 characters.";
+
+        return;
+
+    }
+
+
+    if (newPassword !== confirmPassword) {
+
+        message.style.color =
+            "red";
+
+        message.textContent =
+            "Passwords do not match.";
+
+        return;
+
+    }
+
+
+    try {
+
+        message.style.color =
+            "#667eea";
+
+        message.textContent =
+            "Resetting password...";
+
+
+        const response =
+            await fetch(
+                "/api/auth/reset-password?email=" +
+                encodeURIComponent(email) +
+                "&otp=" +
+                encodeURIComponent(otp) +
+                "&newPassword=" +
+                encodeURIComponent(newPassword),
+                {
+                    method: "POST"
+                }
+            );
+
+
+        const result =
+            await response.text();
+
+
+        if (response.ok) {
+
+            message.style.color =
+                "green";
+
+            message.textContent =
+                "Password reset successfully!";
+
+
+            setTimeout(
+                function() {
+
+                    closeForgotPassword();
+
+                    resetForgotPasswordModal();
+
+                },
+                1500
+            );
+
+
+        } else {
+
+            message.style.color =
+                "red";
+
+            message.textContent =
+                result;
+
+        }
+
+
+    } catch (error) {
+
+        console.error(
+            "Password reset error:",
+            error
+        );
+
+        message.style.color =
+            "red";
+
+        message.textContent =
+            "Unable to connect to server.";
+
+    }
+
+}
+
+
+
+// ===============================
+// RESET MODAL TO INITIAL STATE
+// ===============================
+
+function resetForgotPasswordModal() {
+
+    document
+        .getElementById("emailSection")
+        .style.display = "block";
+
+    document
+        .getElementById("otpSection")
+        .style.display = "none";
+
+    document
+        .getElementById("resetSection")
+        .style.display = "none";
+
+
+    document
+        .getElementById("forgotEmail")
+        .value = "";
+
+    document
+        .getElementById("otp")
+        .value = "";
+
+    document
+        .getElementById("newPassword")
+        .value = "";
+
+    document
+        .getElementById("confirmPassword")
+        .value = "";
+
+    document
+        .getElementById("forgotMessage")
+        .textContent = "";
+
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Edit Listing</title>
+
+    <style>
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6fa;
+        }
+
+        nav {
+            background: #222;
+            color: white;
+            padding: 18px 7%;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 35px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            margin-top: 0;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 11px;
+            border: 1px solid #ccc;
+            border-radius: 7px;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .full {
+            grid-column: 1 / -1;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 7px;
+            background: #222;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+        }
+
+        #message {
+            margin: 15px 0;
+            padding: 10px;
+        }
+
+        @media (max-width: 650px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .full {
+                grid-column: auto;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<nav>
+    Clothing Exchange & Swap Marketplace
+</nav>
+
+<div class="container">
+
+    <h1>Edit Clothing Listing</h1>
+
+    <div id="message"></div>
+
+    <div class="grid">
+
+        <div>
+            <label>Clothing Title</label>
+            <input id="title">
+        </div>
+
+        <div>
+            <label>Category</label>
+
+            <select id="category">
+                <option>Shirt</option>
+                <option>T-Shirt</option>
+                <option>Jeans</option>
+                <option>Jacket</option>
+                <option>Dress</option>
+                <option>Shoes</option>
+                <option>Other</option>
+            </select>
+        </div>
+
+        <div>
+            <label>Size</label>
+            <input id="size">
+        </div>
+
+        <div>
+            <label>Brand</label>
+            <input id="brand">
+        </div>
+
+        <div>
+            <label>Condition</label>
+
+            <select id="condition">
+                <option>New</option>
+                <option>Like New</option>
+                <option>Good</option>
+                <option>Fair</option>
+            </select>
+        </div>
+
+        <div>
+            <label>Estimated Value</label>
+            <input id="value" type="number">
+        </div>
+
+        <div>
+            <label>Location</label>
+            <input id="location">
+        </div>
+
+        <div>
+            <label>Image URL</label>
+            <input id="imageUrl">
+        </div>
+
+        <div class="full">
+
+            <label>Description</label>
+
+            <textarea id="description"></textarea>
+
+        </div>
+
+    </div>
+
+    <button id="updateButton">
+        Update Listing
+    </button>
+
+</div>
+
+<script>
+
+const message = document.getElementById("message");
+
+let loggedInUser = null;
+let currentItem = null;
+
+const itemId =
+    new URLSearchParams(window.location.search).get("id");
+
+
+function showMessage(text, success = false) {
+
+    message.textContent = text;
+
+    message.style.color =
+        success ? "green" : "red";
+}
+
+
+async function loadItem() {
+
+    const storedUser =
+        localStorage.getItem("loggedInUser");
+
+    if (!storedUser) {
+
+        window.location.href =
+            "/login.html";
+
+        return;
+    }
+
+    loggedInUser =
+        JSON.parse(storedUser);
+
+    if (!itemId) {
+
+        showMessage(
+            "No clothing item selected."
+        );
+
+        return;
+    }
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/items/" + itemId
+            );
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Clothing item not found."
+            );
+        }
+
+        currentItem =
+            await response.json();
+
+        // OWNER CHECK
+        if (
+            Number(currentItem.ownerId) !==
+            Number(loggedInUser.id)
+        ) {
+
+            showMessage(
+                "You can edit only your own listing."
+            );
+
+            document.getElementById(
+                "updateButton"
+            ).disabled = true;
+
+            return;
+        }
+
+        document.getElementById("title").value =
+            currentItem.title || "";
+
+        document.getElementById("category").value =
+            currentItem.category || "Other";
+
+        document.getElementById("size").value =
+            currentItem.size || "";
+
+        document.getElementById("brand").value =
+            currentItem.brand || "";
+
+        document.getElementById("condition").value =
+            currentItem.condition || "Good";
+
+        document.getElementById("value").value =
+            currentItem.estimatedValue || "";
+
+        document.getElementById("location").value =
+            currentItem.location || "";
+
+        document.getElementById("imageUrl").value =
+            currentItem.imageUrl || "";
+
+        document.getElementById("description").value =
+            currentItem.description || "";
+
+    } catch (error) {
+
+        showMessage(error.message);
+    }
+}
+
+
+document.getElementById(
+    "updateButton"
+).addEventListener("click", async () => {
+
+    if (!currentItem || !loggedInUser) {
+        return;
+    }
+
+    const updatedItem = {
+
+        title:
+            document.getElementById("title")
+                .value.trim(),
+
+        category:
+            document.getElementById("category")
+                .value,
+
+        size:
+            document.getElementById("size")
+                .value.trim(),
+
+        brand:
+            document.getElementById("brand")
+                .value.trim(),
+
+        condition:
+            document.getElementById("condition")
+                .value,
+
+        estimatedValue:
+            Number(
+                document.getElementById("value")
+                    .value || 0
+            ),
+
+        location:
+            document.getElementById("location")
+                .value.trim(),
+
+        imageUrl:
+            document.getElementById("imageUrl")
+                .value.trim(),
+
+        description:
+            document.getElementById("description")
+                .value.trim(),
+
+        status:
+            currentItem.status
+    };
+
+
+    if (!updatedItem.title ||
+        !updatedItem.category ||
+        !updatedItem.size ||
+        !updatedItem.location) {
+
+        showMessage(
+            "Please fill all required fields."
+        );
+
+        return;
+    }
+
+
+    const button =
+        document.getElementById(
+            "updateButton"
+        );
+
+    button.disabled = true;
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/items/" +
+                itemId +
+                "?ownerId=" +
+                loggedInUser.id,
+                {
+                    method: "PUT",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify(
+                            updatedItem
+                        )
+                }
+            );
+
+        const result =
+            await response.text();
+
+        if (!response.ok) {
+
+            throw new Error(result);
+        }
+
+        showMessage(
+            "Listing updated successfully!",
+            true
+        );
+
+        setTimeout(() => {
+
+            window.location.href =
+                "/item-detail.html?id=" +
+                itemId;
+
+        }, 800);
+
+    } catch (error) {
+
+        showMessage(
+            error.message
+        );
+
+    } finally {
+
+        button.disabled = false;
+    }
+
+});
+
+
+loadItem();
+
+</script>
+
+</body>
+</html>

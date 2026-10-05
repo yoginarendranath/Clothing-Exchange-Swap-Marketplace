@@ -1,0 +1,1444 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Swap Calculator - Clothing Exchange</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f5f3ff;
+            color: #222;
+        }
+
+        /* ================= NAVBAR ================= */
+
+        .navbar {
+            background: #6c4ce8;
+            color: white;
+            padding: 18px 30px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar h2 {
+            font-size: 22px;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-weight: bold;
+        }
+
+        .navbar a:hover {
+            text-decoration: underline;
+        }
+
+        /* ================= CONTAINER ================= */
+
+        .container {
+            width: 90%;
+            max-width: 1100px;
+            margin: 35px auto;
+        }
+
+        .heading {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .heading h1 {
+            color: #4b32a8;
+            margin-bottom: 8px;
+        }
+
+        .heading p {
+            color: #666;
+        }
+
+        /* ================= CALCULATOR ================= */
+
+        .calculator {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+
+            box-shadow:
+                0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .card h2 {
+            color: #4b32a8;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 7px;
+            font-weight: bold;
+        }
+
+        select {
+            width: 100%;
+            padding: 13px;
+
+            border: 1px solid #ccc;
+            border-radius: 8px;
+
+            font-size: 15px;
+            background: white;
+        }
+
+        /* ================= BUTTON ================= */
+
+        button {
+            width: 100%;
+            padding: 13px;
+            margin-top: 22px;
+
+            border: none;
+            border-radius: 8px;
+
+            background: #6c4ce8;
+            color: white;
+
+            font-size: 16px;
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #5638c5;
+        }
+
+        button:disabled {
+            background: #aaa;
+            cursor: not-allowed;
+        }
+
+        /* ================= ITEM INFO ================= */
+
+        .item-info {
+            margin-top: 20px;
+            padding: 18px;
+
+            border-radius: 10px;
+
+            background: #f0ecff;
+
+            display: none;
+        }
+
+        .item-info h3 {
+            color: #4b32a8;
+            margin-bottom: 12px;
+        }
+
+        .item-info p {
+            margin: 7px 0;
+        }
+
+        .item-value {
+            font-size: 27px;
+            font-weight: bold;
+
+            color: #6c4ce8;
+
+            margin-top: 12px;
+        }
+
+        /* ================= COMPARISON ================= */
+
+        .comparison {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .comparison-box {
+            padding: 20px;
+
+            border-radius: 10px;
+
+            margin-top: 15px;
+
+            background: #f8f8f8;
+        }
+
+        .comparison-box p {
+            margin: 10px 0;
+        }
+
+        .difference {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .fair {
+            color: green;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .negotiation {
+            color: #d97706;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .high {
+            color: #d32f2f;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        /* ================= REQUEST BUTTON ================= */
+
+        .request-swap-btn {
+            background: #198754;
+
+            margin-top: 25px;
+        }
+
+        .request-swap-btn:hover {
+            background: #146c43;
+        }
+
+        /* ================= MESSAGE ================= */
+
+        .message {
+            padding: 15px;
+            margin-bottom: 20px;
+
+            border-radius: 8px;
+
+            display: none;
+        }
+
+        .error {
+            background: #ffe5e5;
+            color: #b00020;
+        }
+
+        .success {
+            background: #e5f8e9;
+            color: #176b2c;
+        }
+
+        .loading {
+            color: #666;
+            margin-top: 10px;
+        }
+
+        /* ================= RESPONSIVE ================= */
+
+        @media (max-width: 768px) {
+
+            .calculator {
+                grid-template-columns: 1fr;
+            }
+
+            .navbar {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .navbar a {
+                margin-left: 10px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- ================= NAVBAR ================= -->
+
+<div class="navbar">
+
+    <h2>
+        Clothing Exchange
+    </h2>
+
+    <div>
+
+        <a href="dashboard.html">
+            Dashboard
+        </a>
+
+        <a href="listings.html">
+            Listings
+        </a>
+
+        <a href="swap-requests.html">
+            Swaps
+        </a>
+
+    </div>
+
+</div>
+
+
+<!-- ================= MAIN ================= -->
+
+<div class="container">
+
+
+    <div class="heading">
+
+        <h1>
+            Swap Value Calculator
+        </h1>
+
+        <p>
+            Select actual clothing listings and compare
+            their estimated values.
+        </p>
+
+    </div>
+
+
+    <div id="message"
+         class="message">
+    </div>
+
+
+    <!-- ================= SELECT ITEMS ================= -->
+
+    <div class="calculator">
+
+
+        <!-- YOUR ITEM -->
+
+        <div class="card">
+
+            <h2>
+                Your Clothing
+            </h2>
+
+
+            <label>
+                Select Your Listing
+            </label>
+
+
+            <select id="myItem">
+
+                <option value="">
+                    Loading your listings...
+                </option>
+
+            </select>
+
+
+            <div class="item-info"
+                 id="myItemInfo">
+
+                <h3 id="myTitle"></h3>
+
+
+                <p>
+                    <strong>Category:</strong>
+                    <span id="myCategory"></span>
+                </p>
+
+
+                <p>
+                    <strong>Brand:</strong>
+                    <span id="myBrand"></span>
+                </p>
+
+
+                <p>
+                    <strong>Size:</strong>
+                    <span id="mySize"></span>
+                </p>
+
+
+                <p>
+                    <strong>Condition:</strong>
+                    <span id="myCondition"></span>
+                </p>
+
+
+                <p>
+                    <strong>Location:</strong>
+                    <span id="myLocation"></span>
+                </p>
+
+
+                <div class="item-value">
+
+                    ₹<span id="myValue">
+                        0
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- OTHER ITEM -->
+
+        <div class="card">
+
+            <h2>
+                Exchange With
+            </h2>
+
+
+            <label>
+                Select Other Listing
+            </label>
+
+
+            <select id="otherItem">
+
+                <option value="">
+                    Loading available listings...
+                </option>
+
+            </select>
+
+
+            <div class="item-info"
+                 id="otherItemInfo">
+
+                <h3 id="otherTitle"></h3>
+
+
+                <p>
+                    <strong>Category:</strong>
+                    <span id="otherCategory"></span>
+                </p>
+
+
+                <p>
+                    <strong>Brand:</strong>
+                    <span id="otherBrand"></span>
+                </p>
+
+
+                <p>
+                    <strong>Size:</strong>
+                    <span id="otherSize"></span>
+                </p>
+
+
+                <p>
+                    <strong>Condition:</strong>
+                    <span id="otherCondition"></span>
+                </p>
+
+
+                <p>
+                    <strong>Location:</strong>
+                    <span id="otherLocation"></span>
+                </p>
+
+
+                <div class="item-value">
+
+                    ₹<span id="otherValue">
+                        0
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= COMPARE BUTTON ================= -->
+
+    <button id="compareButton"
+            onclick="compareItems()"
+            disabled>
+
+        Compare Swap Values
+
+    </button>
+
+
+    <!-- ================= COMPARISON ================= -->
+
+    <div class="card comparison"
+         id="comparison">
+
+
+        <h2>
+            Swap Comparison
+        </h2>
+
+
+        <div class="comparison-box">
+
+
+            <p>
+
+                <strong>
+                    Your Item:
+                </strong>
+
+                <span id="comparisonTitle1">
+                </span>
+
+            </p>
+
+
+            <p>
+
+                <strong>
+                    Your Item Value:
+                </strong>
+
+                ₹<span id="compareValue1">
+                    0
+                </span>
+
+            </p>
+
+
+            <hr style="margin:15px 0;">
+
+
+            <p>
+
+                <strong>
+                    Exchange Item:
+                </strong>
+
+                <span id="comparisonTitle2">
+                </span>
+
+            </p>
+
+
+            <p>
+
+                <strong>
+                    Exchange Item Value:
+                </strong>
+
+                ₹<span id="compareValue2">
+                    0
+                </span>
+
+            </p>
+
+
+            <hr style="margin:15px 0;">
+
+
+            <p class="difference">
+
+                Value Difference:
+
+                ₹<span id="difference">
+                    0
+                </span>
+
+            </p>
+
+
+            <p id="swapResult">
+            </p>
+
+
+            <!-- REQUEST SWAP -->
+
+            <button
+                id="requestSwapButton"
+                class="request-swap-btn"
+                onclick="requestSwapFromCalculator()"
+                style="display:none;">
+
+                🔄 Request This Swap
+
+            </button>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+
+/* =====================================================
+   GLOBAL DATA
+===================================================== */
+
+let myListings = [];
+
+let otherListings = [];
+
+
+/* =====================================================
+   LOGGED-IN USER
+===================================================== */
+
+const loggedInUser =
+    JSON.parse(
+        localStorage.getItem(
+            "loggedInUser"
+        )
+    );
+
+
+if (!loggedInUser) {
+
+    alert(
+        "Please login first."
+    );
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+/* =====================================================
+   LOAD USER LISTINGS
+===================================================== */
+
+async function loadMyListings() {
+
+    const select =
+        document.getElementById(
+            "myItem"
+        );
+
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/items/owner/${loggedInUser.id}`
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Unable to load your listings."
+            );
+
+        }
+
+
+        const items =
+            await response.json();
+
+
+        myListings =
+            items.filter(
+                item =>
+                    item.status ===
+                    "AVAILABLE"
+            );
+
+
+        select.innerHTML =
+            '<option value="">-- Select Your Clothing --</option>';
+
+
+        if (
+            myListings.length === 0
+        ) {
+
+            select.innerHTML +=
+                '<option value="">No available listings found</option>';
+
+            return;
+
+        }
+
+
+        myListings.forEach(
+            item => {
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+
+                option.value =
+                    item.id;
+
+
+                option.textContent =
+                    `${item.title} - ₹${item.estimatedValue ?? 0}`;
+
+
+                select.appendChild(
+                    option
+                );
+
+            }
+        );
+
+
+    } catch (error) {
+
+        console.error(error);
+
+
+        showMessage(
+            "Unable to load your clothing listings.",
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   LOAD OTHER LISTINGS
+===================================================== */
+
+async function loadOtherListings() {
+
+    const select =
+        document.getElementById(
+            "otherItem"
+        );
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/items/available"
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Unable to load available listings."
+            );
+
+        }
+
+
+        const items =
+            await response.json();
+
+
+        otherListings =
+            items.filter(
+                item =>
+
+                    item.status ===
+                    "AVAILABLE"
+
+                    &&
+
+                    Number(item.ownerId) !==
+                    Number(loggedInUser.id)
+            );
+
+
+        select.innerHTML =
+            '<option value="">-- Select Exchange Clothing --</option>';
+
+
+        if (
+            otherListings.length === 0
+        ) {
+
+            select.innerHTML +=
+                '<option value="">No other listings found</option>';
+
+            return;
+
+        }
+
+
+        otherListings.forEach(
+            item => {
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+
+                option.value =
+                    item.id;
+
+
+                option.textContent =
+                    `${item.title} - ₹${item.estimatedValue ?? 0}`;
+
+
+                select.appendChild(
+                    option
+                );
+
+            }
+        );
+
+
+    } catch (error) {
+
+        console.error(error);
+
+
+        showMessage(
+            "Unable to load available clothing listings.",
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   YOUR ITEM CHANGE
+===================================================== */
+
+document.getElementById(
+    "myItem"
+).addEventListener(
+    "change",
+    function () {
+
+
+        const itemId =
+            Number(this.value);
+
+
+        const item =
+            myListings.find(
+                i =>
+                    Number(i.id) ===
+                    itemId
+            );
+
+
+        if (!item) {
+
+            document.getElementById(
+                "myItemInfo"
+            ).style.display =
+                "none";
+
+
+            hideComparison();
+
+
+            updateCompareButton();
+
+            return;
+
+        }
+
+
+        document.getElementById(
+            "myTitle"
+        ).innerText =
+            item.title || "N/A";
+
+
+        document.getElementById(
+            "myCategory"
+        ).innerText =
+            item.category || "N/A";
+
+
+        document.getElementById(
+            "myBrand"
+        ).innerText =
+            item.brand || "N/A";
+
+
+        document.getElementById(
+            "mySize"
+        ).innerText =
+            item.size || "N/A";
+
+
+        document.getElementById(
+            "myCondition"
+        ).innerText =
+            item.condition || "N/A";
+
+
+        document.getElementById(
+            "myLocation"
+        ).innerText =
+            item.location || "N/A";
+
+
+        document.getElementById(
+            "myValue"
+        ).innerText =
+            formatValue(
+                item.estimatedValue
+            );
+
+
+        document.getElementById(
+            "myItemInfo"
+        ).style.display =
+            "block";
+
+
+        hideComparison();
+
+
+        updateCompareButton();
+
+    }
+);
+
+
+/* =====================================================
+   OTHER ITEM CHANGE
+===================================================== */
+
+document.getElementById(
+    "otherItem"
+).addEventListener(
+    "change",
+    function () {
+
+
+        const itemId =
+            Number(this.value);
+
+
+        const item =
+            otherListings.find(
+                i =>
+                    Number(i.id) ===
+                    itemId
+            );
+
+
+        if (!item) {
+
+            document.getElementById(
+                "otherItemInfo"
+            ).style.display =
+                "none";
+
+
+            hideComparison();
+
+
+            updateCompareButton();
+
+            return;
+
+        }
+
+
+        document.getElementById(
+            "otherTitle"
+        ).innerText =
+            item.title || "N/A";
+
+
+        document.getElementById(
+            "otherCategory"
+        ).innerText =
+            item.category || "N/A";
+
+
+        document.getElementById(
+            "otherBrand"
+        ).innerText =
+            item.brand || "N/A";
+
+
+        document.getElementById(
+            "otherSize"
+        ).innerText =
+            item.size || "N/A";
+
+
+        document.getElementById(
+            "otherCondition"
+        ).innerText =
+            item.condition || "N/A";
+
+
+        document.getElementById(
+            "otherLocation"
+        ).innerText =
+            item.location || "N/A";
+
+
+        document.getElementById(
+            "otherValue"
+        ).innerText =
+            formatValue(
+                item.estimatedValue
+            );
+
+
+        document.getElementById(
+            "otherItemInfo"
+        ).style.display =
+            "block";
+
+
+        hideComparison();
+
+
+        updateCompareButton();
+
+    }
+);
+
+
+/* =====================================================
+   COMPARE BUTTON
+===================================================== */
+
+function updateCompareButton() {
+
+    const item1 =
+        document.getElementById(
+            "myItem"
+        ).value;
+
+
+    const item2 =
+        document.getElementById(
+            "otherItem"
+        ).value;
+
+
+    document.getElementById(
+        "compareButton"
+    ).disabled =
+        !(item1 && item2);
+
+}
+
+
+/* =====================================================
+   COMPARE ITEMS
+===================================================== */
+
+function compareItems() {
+
+
+    const item1Id =
+        Number(
+            document.getElementById(
+                "myItem"
+            ).value
+        );
+
+
+    const item2Id =
+        Number(
+            document.getElementById(
+                "otherItem"
+            ).value
+        );
+
+
+    const item1 =
+        myListings.find(
+            item =>
+                Number(item.id) ===
+                item1Id
+        );
+
+
+    const item2 =
+        otherListings.find(
+            item =>
+                Number(item.id) ===
+                item2Id
+        );
+
+
+    if (!item1 || !item2) {
+
+        alert(
+            "Please select both clothing items."
+        );
+
+        return;
+
+    }
+
+
+    const value1 =
+        Number(
+            item1.estimatedValue || 0
+        );
+
+
+    const value2 =
+        Number(
+            item2.estimatedValue || 0
+        );
+
+
+    if (
+        value1 <= 0 ||
+        value2 <= 0
+    ) {
+
+        alert(
+            "Both items must have a valid estimated value."
+        );
+
+        return;
+
+    }
+
+
+    const difference =
+        Math.abs(
+            value1 - value2
+        );
+
+
+    const average =
+        (value1 + value2) / 2;
+
+
+    const percentageDifference =
+        (difference / average) * 100;
+
+
+    document.getElementById(
+        "comparisonTitle1"
+    ).innerText =
+        item1.title;
+
+
+    document.getElementById(
+        "comparisonTitle2"
+    ).innerText =
+        item2.title;
+
+
+    document.getElementById(
+        "compareValue1"
+    ).innerText =
+        formatValue(value1);
+
+
+    document.getElementById(
+        "compareValue2"
+    ).innerText =
+        formatValue(value2);
+
+
+    document.getElementById(
+        "difference"
+    ).innerText =
+        formatValue(difference);
+
+
+    const result =
+        document.getElementById(
+            "swapResult"
+        );
+
+
+    result.className = "";
+
+
+    if (
+        percentageDifference <= 15
+    ) {
+
+        result.innerText =
+            "✓ Fair Swap — The estimated values are relatively close.";
+
+        result.className =
+            "fair";
+
+    }
+
+    else if (
+        percentageDifference <= 30
+    ) {
+
+        result.innerText =
+            "⚠ Negotiable Swap — There is a moderate value difference.";
+
+        result.className =
+            "negotiation";
+
+    }
+
+    else {
+
+        result.innerText =
+            "⚠ High Value Difference — Additional negotiation may be required.";
+
+        result.className =
+            "high";
+
+    }
+
+
+    document.getElementById(
+        "comparison"
+    ).style.display =
+        "block";
+
+
+    /*
+     * SHOW REQUEST BUTTON
+     */
+
+    document.getElementById(
+        "requestSwapButton"
+    ).style.display =
+        "block";
+
+
+    document.getElementById(
+        "comparison"
+    ).scrollIntoView({
+        behavior: "smooth"
+    });
+
+}
+
+
+/* =====================================================
+   REQUEST SWAP FROM CALCULATOR
+===================================================== */
+
+function requestSwapFromCalculator() {
+
+
+    if (!loggedInUser) {
+
+        alert(
+            "Please login first."
+        );
+
+        window.location.href =
+            "login.html";
+
+        return;
+
+    }
+
+
+    const myItemId =
+        Number(
+            document.getElementById(
+                "myItem"
+            ).value
+        );
+
+
+    const otherItemId =
+        Number(
+            document.getElementById(
+                "otherItem"
+            ).value
+        );
+
+
+    if (
+        !myItemId ||
+        !otherItemId
+    ) {
+
+        alert(
+            "Please select both clothing items first."
+        );
+
+        return;
+
+    }
+
+
+    const myItem =
+        myListings.find(
+            item =>
+                Number(item.id) ===
+                myItemId
+        );
+
+
+    const otherItem =
+        otherListings.find(
+            item =>
+                Number(item.id) ===
+                otherItemId
+        );
+
+
+    if (!myItem || !otherItem) {
+
+        alert(
+            "Selected clothing items could not be found."
+        );
+
+        return;
+
+    }
+
+
+    /*
+     * IMPORTANT:
+     *
+     * itemId =
+     * OTHER USER'S ITEM
+     *
+     * offeredItemId =
+     * YOUR ITEM
+     */
+
+    const url =
+        `/swap-request.html?itemId=${
+            encodeURIComponent(
+                otherItem.id
+            )
+        }&offeredItemId=${
+            encodeURIComponent(
+                myItem.id
+            )
+        }`;
+
+
+    window.location.href =
+        url;
+
+}
+
+
+/* =====================================================
+   HIDE COMPARISON
+===================================================== */
+
+function hideComparison() {
+
+    document.getElementById(
+        "comparison"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "requestSwapButton"
+    ).style.display =
+        "none";
+
+}
+
+
+/* =====================================================
+   FORMAT MONEY
+===================================================== */
+
+function formatValue(value) {
+
+    return Number(
+        value || 0
+    ).toLocaleString(
+        "en-IN"
+    );
+
+}
+
+
+/* =====================================================
+   MESSAGE
+===================================================== */
+
+function showMessage(
+    message,
+    type
+) {
+
+    const element =
+        document.getElementById(
+            "message"
+        );
+
+
+    element.innerText =
+        message;
+
+
+    element.className =
+        "message " + type;
+
+
+    element.style.display =
+        "block";
+
+}
+
+
+/* =====================================================
+   INITIAL LOAD
+===================================================== */
+
+async function initializeCalculator() {
+
+    await Promise.all([
+        loadMyListings(),
+        loadOtherListings()
+    ]);
+
+}
+
+
+initializeCalculator();
+
+</script>
+
+
+</body>
+
+</html>
