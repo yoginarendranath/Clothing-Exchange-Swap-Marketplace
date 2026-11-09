@@ -47,8 +47,10 @@ public class OtpService {
 
         String normalizedEmail = email.trim().toLowerCase();
 
+        // Delete previous OTP
         otpRepository.deleteByEmail(normalizedEmail);
 
+        // Generate 6-digit OTP
         String generatedOtp = String.valueOf(
                 100000 + RANDOM.nextInt(900000)
         );
@@ -63,6 +65,7 @@ public class OtpService {
 
         otpRepository.save(verification);
 
+        // Send OTP using Resend API
         Map<String, Object> emailRequest = Map.of(
                 "from", resendFromEmail,
                 "to", List.of(normalizedEmail),
@@ -166,6 +169,7 @@ public class OtpService {
         otpRepository
                 .findTopByEmailOrderByIdDesc(normalizedEmail)
                 .ifPresent(savedOtp -> {
+
                     savedOtp.setUsed(true);
                     otpRepository.save(savedOtp);
                 });
