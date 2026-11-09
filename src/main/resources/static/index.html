@@ -1,17 +1,476 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ClothSwap</title>
+    <title>ClothSwap | Clothing Exchange Marketplace</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            color: #252525;
+            background: #ffffff;
+        }
+
+        /* NAVBAR */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 7%;
+            background: white;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 27px;
+            font-weight: bold;
+            color: #6c3bd1;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 28px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .nav-links a:hover {
+            color: #6c3bd1;
+        }
+
+        .signin {
+            padding: 11px 20px;
+            border: 1px solid #6c3bd1;
+            border-radius: 7px;
+            color: #6c3bd1 !important;
+        }
+
+        .signup {
+            padding: 12px 21px;
+            background: #6c3bd1;
+            color: white !important;
+            border-radius: 7px;
+        }
+
+        /* HERO */
+        .hero {
+            min-height: 570px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 70px 9%;
+            gap: 40px;
+            background: linear-gradient(120deg, #f6f0ff, #fff8f2);
+        }
+
+        .hero-content {
+            max-width: 560px;
+        }
+
+        .tag {
+            color: #6c3bd1;
+            font-weight: bold;
+            letter-spacing: 1px;
+            font-size: 13px;
+        }
+
+        .hero h1 {
+            font-size: clamp(40px, 5vw, 60px);
+            line-height: 1.12;
+            margin: 20px 0;
+        }
+
+        .hero h1 span {
+            color: #6c3bd1;
+        }
+
+        .hero p {
+            color: #666;
+            line-height: 1.8;
+            font-size: 17px;
+            margin-bottom: 30px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 25px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .primary {
+            background: #6c3bd1;
+            color: white;
+        }
+
+        .secondary {
+            border: 1px solid #6c3bd1;
+            color: #6c3bd1;
+        }
+
+        .hero-image {
+            width: 45%;
+            max-width: 480px;
+            height: 390px;
+            object-fit: cover;
+            border-radius: 25px;
+            box-shadow: 0 15px 40px rgba(60,30,100,0.15);
+        }
+
+        /* FEATURES */
+        .section {
+            padding: 80px 8%;
+            text-align: center;
+        }
+
+        .section h2 {
+            font-size: 35px;
+            margin-bottom: 15px;
+        }
+
+        .section-subtitle {
+            color: #777;
+            margin-bottom: 45px;
+            line-height: 1.6;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+        }
+
+        .feature-card {
+            padding: 35px 25px;
+            border: 1px solid #eee;
+            border-radius: 15px;
+            background: white;
+            transition: 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-7px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+        }
+
+        .feature-icon {
+            font-size: 40px;
+            margin-bottom: 18px;
+        }
+
+        .feature-card h3 {
+            margin-bottom: 12px;
+        }
+
+        .feature-card p {
+            color: #777;
+            line-height: 1.7;
+            font-size: 14px;
+        }
+
+        /* HOW IT WORKS */
+        .how {
+            background: #f8f5ff;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+        }
+
+        .step {
+            padding: 25px;
+        }
+
+        .step-number {
+            width: 50px;
+            height: 50px;
+            display: grid;
+            place-items: center;
+            margin: 0 auto 18px;
+            border-radius: 50%;
+            background: #6c3bd1;
+            color: white;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .step p {
+            color: #777;
+            margin-top: 10px;
+            line-height: 1.6;
+        }
+
+        /* CTA */
+        .cta {
+            padding: 75px 20px;
+            text-align: center;
+            background: #6c3bd1;
+            color: white;
+        }
+
+        .cta h2 {
+            font-size: 35px;
+            margin-bottom: 15px;
+        }
+
+        .cta p {
+            margin-bottom: 28px;
+            line-height: 1.6;
+        }
+
+        .cta .btn {
+            background: white;
+            color: #6c3bd1;
+        }
+
+        /* FOOTER */
+        footer {
+            padding: 30px 8%;
+            background: #211b2c;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        footer a {
+            color: #d8c8ff;
+            text-decoration: none;
+        }
+
+        /* MOBILE */
+        @media (max-width: 768px) {
+            nav {
+                padding: 18px 5%;
+                flex-wrap: wrap;
+                gap: 18px;
+            }
+
+            .nav-links {
+                gap: 12px;
+                flex-wrap: wrap;
+            }
+
+            .nav-links a {
+                font-size: 12px;
+            }
+
+            .hero {
+                flex-direction: column;
+                text-align: center;
+                padding: 55px 6%;
+            }
+
+            .hero-buttons {
+                justify-content: center;
+            }
+
+            .hero-image {
+                width: 100%;
+                height: 280px;
+            }
+
+            .features, .steps {
+                grid-template-columns: 1fr;
+            }
+
+            .section h2, .cta h2 {
+                font-size: 28px;
+            }
+        }
+    </style>
 </head>
+
 <body>
 
-<script>
-    window.location.replace("/login.html");
-</script>
+    <!-- NAVBAR -->
+    <nav>
+        <a href="/" class="logo">♻ ClothSwap</a>
 
-<p>Redirecting to ClothSwap...</p>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="#how-it-works">How It Works</a>
+            <a href="#why-swap">Why Swap?</a>
+            <a href="/login.html" class="signin">Sign In</a>
+            <a href="/register.html" class="signup">Sign Up</a>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <div class="hero-content">
+            <span class="tag">SUSTAINABLE FASHION MARKETPLACE</span>
+
+            <h1>
+                Give Your Clothes
+                <span>A New Life.</span>
+            </h1>
+
+            <p>
+                Refresh your wardrobe without spending more.
+                Exchange clothes you no longer wear and discover
+                amazing styles from others in our community.
+            </p>
+
+            <div class="hero-buttons">
+                <a href="/register.html" class="btn primary">
+                    Get Started →
+                </a>
+
+                <a href="/login.html" class="btn secondary">
+                    Sign In
+                </a>
+            </div>
+        </div>
+
+        <img
+            class="hero-image"
+            src="https://images.unsplash.com/photo-1445205170230-053b83016050?w=1000"
+            alt="Fashion clothing collection"
+        >
+    </section>
+
+    <!-- FEATURES -->
+    <section class="section" id="why-swap">
+        <h2>Why Choose ClothSwap?</h2>
+
+        <p class="section-subtitle">
+            Make fashion more affordable, sustainable and exciting.
+        </p>
+
+        <div class="features">
+
+            <div class="feature-card">
+                <div class="feature-icon">👕</div>
+                <h3>Exchange Clothes</h3>
+                <p>
+                    List clothes you no longer need and exchange
+                    them for something you love.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🌱</div>
+                <h3>Eco-Friendly Fashion</h3>
+                <p>
+                    Reduce textile waste and support a more
+                    sustainable fashion lifestyle.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🤝</div>
+                <h3>Connect & Swap</h3>
+                <p>
+                    Connect with other users, send swap requests
+                    and discover new fashion.
+                </p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="section how" id="how-it-works">
+        <h2>How ClothSwap Works</h2>
+
+        <p class="section-subtitle">
+            Start exchanging clothes in just three simple steps.
+        </p>
+
+        <div class="steps">
+
+            <div class="step">
+                <div class="step-number">1</div>
+                <h3>Create Your Account</h3>
+                <p>
+                    Sign up and become a part of our clothing
+                    exchange community.
+                </p>
+            </div>
+
+            <div class="step">
+                <div class="step-number">2</div>
+                <h3>List Your Clothes</h3>
+                <p>
+                    Upload pictures and details of clothes
+                    you want to exchange.
+                </p>
+            </div>
+
+            <div class="step">
+                <div class="step-number">3</div>
+                <h3>Find & Swap</h3>
+                <p>
+                    Discover clothes, send swap requests
+                    and refresh your wardrobe.
+                </p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- CALL TO ACTION -->
+    <section class="cta">
+        <h2>Ready to Refresh Your Wardrobe?</h2>
+
+        <p>
+            Join ClothSwap and give your unused clothes
+            a chance to make someone happy.
+        </p>
+
+        <a href="/register.html" class="btn">
+            Join ClothSwap Today →
+        </a>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div>
+            <strong>♻ ClothSwap</strong>
+            <p style="margin-top:8px;font-size:13px;">
+                Fashion with a second chance.
+            </p>
+        </div>
+
+        <div>
+            <a href="/login.html">Sign In</a>
+            &nbsp; | &nbsp;
+            <a href="/register.html">Sign Up</a>
+        </div>
+
+        <p style="font-size:13px;">
+            © 2026 ClothSwap. All rights reserved.
+        </p>
+    </footer>
 
 </body>
 </html>
