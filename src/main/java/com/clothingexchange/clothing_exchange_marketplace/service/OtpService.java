@@ -5,12 +5,17 @@ import com.clothingexchange.clothing_exchange_marketplace.model.OtpVerification;
 import com.clothingexchange.clothing_exchange_marketplace.repository.OtpVerificationRepository;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.security.SecureRandom;
-import java.util.List;
+import java.util.Base64;
 import java.util.Map;
 
 @Service
@@ -18,24 +23,84 @@ public class OtpService {
 
     private final OtpVerificationRepository otpRepository;
     private final RestClient restClient;
-    private final String resendFromEmail;
+
+    private final String clientId;
+    private final String clientSecret;
+    private final String refreshToken;
+    private final String senderEmail;
 
     private static final SecureRandom RANDOM = new SecureRandom();
 
     public OtpService(
             OtpVerificationRepository otpRepository,
             RestClient.Builder restClientBuilder,
-            @Value("${RESEND_API_KEY}") String resendApiKey,
-            @Value("${RESEND_FROM_EMAIL}") String resendFromEmail) {
+            @Value("${GMAIL_CLIENT_ID}") String clientId,
+            @Value("${GMAIL_CLIENT_SECRET}") String clientSecret,
+            @Value("${GMAIL_REFRESH_TOKEN}") String refreshToken,
+            @Value("${GMAIL_SENDER_EMAIL}") String senderEmail) {
 
         this.otpRepository = otpRepository;
-        this.resendFromEmail = resendFromEmail;
+        this.clientId = clientId;
+        this.clientSecret = clientSecret;
+        this.refreshToken = refreshToken;
+        this.senderEmail = senderEmail;
 
-        this.restClient = restClientBuilder
-                .baseUrl("https://api.resend.com")
-                .defaultHeader("Authorization", "Bearer " + resendApiKey)
-                .defaultHeader("Content-Type", "application/json")
-                .build();
+        this.restClient = restClientBuilder.build();
+    }
+
+    // GET GOOGLE ACCESS TOKEN
+    private String getAccessToken() {
+
+        MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
+
+        form.add("client_id", clientId);
+        form.add("client_secret", clientSecret);
+        form.add("refresh_token", refreshToken);
+        form.add("grant_type", "refresh_token");
+
+        Map<String, Object> response = restClient.post()
+                .uri("https://oauth2.googleapis.com/token")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(form)
+                .retrieve()
+                .body(new ParameterizedTypeReference<Map<String, Object>>() {});
+
+        if (response == null || response.get("access_token") == null) {
+            throw new IllegalStateException("Google access token not received");
+        }
+
+        return response.get("access_token").toString();
+    }
+
+    // SEND EMAIL USING GMAIL API
+    private void sendEmail(String to, String subject, String message) {
+
+        String accessToken = getAccessToken();
+
+        String encodedBody = Base64.getMimeEncoder(
+                76, "\r\n".getBytes(StandardCharsets.UTF_8)
+        ).encodeToString(message.getBytes(StandardCharsets.UTF_8));
+
+        String mimeMessage =
+                "From: " + senderEmail + "\r\n" +
+                "To: " + to + "\r\n" +
+                "Subject: " + subject + "\r\n" +
+                "MIME-Version: 1.0\r\n" +
+                "Content-Type: text/plain; charset=UTF-8\r\n" +
+                "Content-Transfer-Encoding: base64\r\n\r\n" +
+                encodedBody;
+
+        String raw = Base64.getUrlEncoder()
+                .withoutPadding()
+                .encodeToString(mimeMessage.getBytes(StandardCharsets.UTF_8));
+
+        restClient.post()
+                .uri("https://gmail.googleapis.com/gmail/v1/users/me/messages/send")
+                .headers(headers -> headers.setBearerAuth(accessToken))
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(Map.of("raw", raw))
+                .retrieve()
+                .toBodilessEntity();
     }
 
     // SEND OTP
@@ -47,10 +112,8 @@ public class OtpService {
 
         String normalizedEmail = email.trim().toLowerCase();
 
-        // Delete previous OTP
         otpRepository.deleteByEmail(normalizedEmail);
 
-        // Generate 6-digit OTP
         String generatedOtp = String.valueOf(
                 100000 + RANDOM.nextInt(900000)
         );
@@ -65,25 +128,15 @@ public class OtpService {
 
         otpRepository.save(verification);
 
-        // Send OTP using Resend API
-        Map<String, Object> emailRequest = Map.of(
-                "from", resendFromEmail,
-                "to", List.of(normalizedEmail),
-                "subject", "Clothing Exchange Marketplace - Password Reset OTP",
-                "text",
-                "Hello,\n\n"
-                        + "Your OTP for password reset is: "
+        sendEmail(
+                normalizedEmail,
+                "Clothing Exchange Marketplace - Password Reset OTP",
+                "Hello,\n\nYour OTP for password reset is: "
                         + generatedOtp
-                        + "\n\nThis OTP is valid for 5 minutes.\n\n"
-                        + "If you did not request this OTP, please ignore this email.\n\n"
-                        + "Clothing Exchange & Swap Marketplace"
+                        + "\n\nThis OTP is valid for 5 minutes."
+                        + "\n\nIf you did not request this OTP, please ignore this email."
+                        + "\n\nClothing Exchange & Swap Marketplace"
         );
-
-        restClient.post()
-                .uri("/emails")
-                .body(emailRequest)
-                .retrieve()
-                .toBodilessEntity();
     }
 
     // VERIFY OTP
